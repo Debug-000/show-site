@@ -1,0 +1,12 @@
+{{- range $n := $.Graph.Nodes }}
+input {{$n.Name}}WhereUniqueInput {
+  id: ID
+  {{- range $f := $n.Fields }}
+  {{- if $f.Unique }}
+  {{ $f.Name | Camel }}: {{index $.TypesTemplate  $f.Type.String}}
+  {{- end }}
+  {{- end }}
+}
+
+{{- end }}
+

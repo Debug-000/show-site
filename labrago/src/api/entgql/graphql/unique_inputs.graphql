@@ -1,0 +1,8 @@
+
+input RoleWhereUniqueInput {
+  id: ID
+}
+input UserWhereUniqueInput {
+  id: ID
+}
+
