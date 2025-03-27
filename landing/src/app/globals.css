@@ -16,3 +16,11 @@ body {
 .clip-path {
   clip-path: polygon(0 0, 100% 0, 100% 77%, 0% 100%);
 }
+
+.scaled {
+  transform: scale(1);
+  transition: transform 0.5s;
+}
+.scaled:hover {
+  transform: scale(0.95);
+}

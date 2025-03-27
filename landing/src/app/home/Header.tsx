@@ -6,14 +6,14 @@ export default function Header() {
   const [copied, setCopied] = useState(false);
 
   const copyText = () => {
-    navigator.clipboard.writeText("npm install labrago").then(() => {
+    navigator.clipboard.writeText("npx create labrago").then(() => {
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+      setTimeout(() => setCopied(false), 2000);
     });
   };
 
   return (
-    <div className="flex justify-between items-center p-[10rem]">
+    <div className="flex justify-between items-center p-[8rem]">
       <div className="w-[50%] flex flex-col gap-4">
         <h5 className="bg-white w-fit px-4 py-2 rounded-4xl tracking-wider font-black text-blue-700">
           LabraGo CMS with Go Lang
@@ -31,8 +31,8 @@ export default function Header() {
           <input
             id="npm-install"
             type="text"
-            className="col-span-6 border rounded-lg p-2.5 bg-gray-700 border-gray-600 text-gray-100"
-            value="npm install labrago"
+            className="col-span-6 border rounded-lg p-2.5 bg-[#282f3d] border-gray-600 text-gray-100"
+            value="npx create labrago"
             disabled
             readOnly
           />
