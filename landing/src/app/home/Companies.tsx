@@ -7,7 +7,7 @@ import Uber from "../../../public/Uber.png";
 
 export default function Companies() {
   return (
-    <div className="flex justify-center flex-col items-center my-[7rem]">
+    <div className="flex justify-center flex-col items-center my-[7rem] max-w-[1440px] mx-auto">
       <h1 className="text-blue-700">Trusted by</h1>
       <div className="w-full flex justify-between items-center my-[3rem] gap-4 px-8">
         <Image

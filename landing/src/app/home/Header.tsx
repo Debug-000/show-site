@@ -19,7 +19,8 @@ export default function Header() {
           LabraGo CMS with Go Lang
         </h5>
         <h1 className="text-[3rem] font-black tracking-tight leading-[3.5rem] capitalize">
-          Build modern websites with the most customizable Headless CMS
+          Build modern websites with the most customizable{" "}
+          <span className="text-blue-700">Headless CMS</span>
         </h1>
         <p>
           The open-source Headless CMS for developers that makes API creation

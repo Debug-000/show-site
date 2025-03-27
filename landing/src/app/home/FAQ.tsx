@@ -33,7 +33,7 @@ export default function FAQ() {
   };
 
   return (
-    <div className="flex justify-start items-center mt-[30rem] px-4 gap-4">
+    <div className="flex justify-start items-center mt-[30rem] px-4 gap-4 max-w-[1440px] mx-auto">
       <div className="">
         <h5 className="bg-neutral-100 w-fit px-4 py-2 rounded-4xl tracking-wider font-black text-blue-700">
           Get Help
