@@ -31,6 +31,7 @@ export const ContentManagerScene = () => {
     const contentManagerSelection = useSelection<string>(contentManagerIds.storeIds);
     const [selectionEnabled, setSelectionEnabled] = useState(false);
     const [filterEnabled, setFilterEnabled] = useState<boolean>(!!Object.keys(contentManager.contentManagerSearch.state.filter).length);
+    const [showId, setShowId] = useState<boolean>(false);
     const expansionStore = useRowExpansionStore();
     const dynamicDialog = useDynamicDialog();
     const deleteConfirmationDialog = useDialog();
@@ -43,7 +44,8 @@ export const ContentManagerScene = () => {
         fields: contentManager.contentManagerStore.state.entityFields,
         edges: contentManager.contentManagerStore.state.entityEdges,
         displayFieldName: contentManager.displayFieldName,
-        expansionStore: expansionStore
+        expansionStore: expansionStore,
+        showId: showId
     });
 
     const gridFilter = useDyamicGridFilter({
@@ -126,8 +128,8 @@ export const ContentManagerScene = () => {
             expanstionStore: expansionStore,
             getExpansionNode: useCallback((row: any, params: any) => (
                 <AbsoluteHeightContainer>
-                    <OneItemViewerGridRoot entityName={params.entityName} entryId={params.entryId} />
-                </AbsoluteHeightContainer>), [])
+                    <OneItemViewerGridRoot entityName={params.entityName} entryId={params.entryId} showId={showId}/>
+                </AbsoluteHeightContainer>), [showId])
         }),
         ColumnsFillRowSpacePlugin,
         usePluginWithParams(RowActionsPlugin, {
@@ -137,7 +139,8 @@ export const ContentManagerScene = () => {
         PinnedColumnsPlugin,
         usePluginWithParams(SkeletonLoadingPlugin, {
             isLoading: contentManager.contentManagerStore.state.dataLoading,
-            rowsWhenEmpty: Defaults.dataTable.skeletonRowsCount
+            rowsWhenEmpty: Defaults.dataTable.skeletonRowsCount,
+            maxRowsWhenNotEmpty: 15
         }),
         usePluginWithParams(EmptyDataPlugin, {
             content: <EmptyMessage />
@@ -175,6 +178,10 @@ export const ContentManagerScene = () => {
 
                     filterEnabled={filterEnabled}
                     onFilterEnabledChange={setFilterEnabled}
+
+                    contentManagerSearch={contentManager.contentManagerSearch}
+                    showId={showId}
+                    onShowIdChange={setShowId}
                 />
                 }>
 

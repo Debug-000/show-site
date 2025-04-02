@@ -1,8 +1,13 @@
+export interface UserRole {
+    id: string;
+    name: string;
+}
+
 export interface User {
-  id: string;
-  avatar?: string;
-  email?: string;
-  name?: string;
-  
-  [key: string]: any;
+    id: string;
+    email: string;
+    name: string;
+    firstName: string;
+    lastName: string;
+    roles: UserRole[];
 }

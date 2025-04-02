@@ -35,7 +35,7 @@ export default function EntityTypeDesignerScene(
     const entityDesigner = useEntityDesignerForEntity(entityName);
     const deleteChildConfirmationDialog = useDialog<DesignerField | DesignerEdge>();
     const entityTypeDesignerEntryDialog = useEntityTypeDesignerEntryDialog();
-    const appStatus = useAppStatus(); 
+    const appStatus = useAppStatus();
     const isEntityBusy = useMemo(() => appStatus.isEntityInCodeGeneration(entityName), [appStatus.isEntityInCodeGeneration, entityName]);
 
     const onEntityChildrenDynamicDialogFinish = useCallback(({ data, openMode, editId }: {
@@ -96,7 +96,7 @@ export default function EntityTypeDesignerScene(
                 )}
             </>)
         }
-    ], [ entityDesigner.fullDesignerEntity?.displayFieldCaption]);
+    ], [entityDesigner.fullDesignerEntity?.displayFieldCaption]);
 
     // Row Actions
     const actions: Action<DesignerField | DesignerEdge>[] = useMemo(

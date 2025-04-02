@@ -1,9 +1,10 @@
-import { Field, GetEntityFirstLevelSchemaQuery } from "@/lib/apollo/graphql";
+import { Edge, Entity, Field, RelationType } from "@/lib/apollo/graphql.entities";
 import { FieldScalarTypes } from "@/types/field-type-descriptor";
 import { FormField, FormOpenMode } from "@/core-features/dynamic-form/form-field";
 import { useMemo } from "react";
 import { ArrayToJSON, DateTimeToString, DateToString, EmptyStringToNull, LookupToGraphQlFormat, NumberToString, StringToJSON, TimeToString } from "@/core-features/dynamic-form/value-convertor";
 import { dynamicLayoutItem, dynamicLayoutItem_Group, dynamicLayoutItem_Item } from "@/core-features/dynamic-layout/src/dynamic-layout";
+import { FullEntity } from "@/types/entity";
 
 const getFieldByType = (field: Field): FormField => {
     switch (field.type) {
@@ -88,10 +89,10 @@ const getFieldByType = (field: Field): FormField => {
                 name: field.name,
                 label: field.caption,
                 options: field.acceptedValues?.filter(i => i)
-                                                .map((i: string | null) => ({
-                                                    label: i!,
-                                                    value: i!
-                                                })) ?? [],
+                    .map((i: string | null) => ({
+                        label: i!,
+                        value: i!
+                    })) ?? [],
                 required: field.required ?? false,
                 defaultValue: field.defaultValue,
                 converter: EmptyStringToNull
@@ -103,10 +104,10 @@ const getFieldByType = (field: Field): FormField => {
                 name: field.name,
                 label: field.caption,
                 options: field.acceptedValues?.filter(i => i)
-                                                .map((i: string | null) => ({
-                                                    label: i!,
-                                                    value: i!
-                                                })) ?? [],
+                    .map((i: string | null) => ({
+                        label: i!,
+                        value: i!
+                    })) ?? [],
                 required: field.required ?? false,
                 defaultValue: ArrayToJSON.compose(field.defaultValue),
             })
@@ -119,11 +120,48 @@ const getFieldByType = (field: Field): FormField => {
         required: false,
         enabled: false
     })
-
 }
 
-export const useContentManagerFormSchema = (entitySchema?: GetEntityFirstLevelSchemaQuery) => {
-    
+const getRelationByType = (edge: Edge, entitySchema?: {entity: Entity}): FormField => {
+    switch (edge.relationType) {
+        case RelationType.One:
+        case RelationType.OneToOne:
+        case RelationType.OneToMany:
+
+            return {
+                type: 'RelationOne',
+                name: edge.name,
+                label: edge.caption,
+                required: edge.required ?? false,
+                entityName: edge.relatedEntity.name,
+                converter: LookupToGraphQlFormat,
+            }
+
+        case RelationType.Many:
+        case RelationType.ManyToOne:
+        case RelationType.ManyToMany:
+
+            return {
+                type: 'RelationMany',
+                name: edge.name,
+                label: edge.caption,
+                required: edge.required ?? false,
+                entityName: edge.relatedEntity.name,
+                converter: LookupToGraphQlFormat,
+            }
+    }
+
+    return ({
+        type: 'ShortText',
+        name: edge.name,
+        label: edge.caption,
+        required: false,
+        enabled: false
+    })
+}
+
+export const useContentManagerFormSchema = (entity: FullEntity | null) => {
+
     const formSchema = useMemo(() => {
 
         var parentGroup: dynamicLayoutItem<FormField> = {
@@ -134,11 +172,11 @@ export const useContentManagerFormSchema = (entitySchema?: GetEntityFirstLevelSc
             children: []
         };
 
-        if (!entitySchema || !entitySchema.entity) {
+        if (!entity) {
             return parentGroup;
         }
 
-        entitySchema.entity.fields!
+        entity.fields!
             .filter(i => i.name != 'id') // skip id
             .filter(i => i.name != 'createdAt' && i.name != 'updatedAt') // TODO: skip createdAt, updateAt from form schema
             .forEach((item) => {
@@ -147,41 +185,36 @@ export const useContentManagerFormSchema = (entitySchema?: GetEntityFirstLevelSc
                     data: {
                         ...formField,
                         tags: {
-                            displayField: entitySchema?.entity?.displayField?.name
+                            displayField: entity?.displayField?.name
                         },
-                     }
+                    }
                 });
             });
 
 
-        entitySchema.entity.edges!
+        entity.edges!
             .filter(i => i.name.startsWith('ref') == false) //TODO: ref fields will be removed from BE
             .filter(i => i.name != 'createdBy' && i.name != 'updatedBy') // skip createdBy, updatedBy from form schema
             .forEach((item) => {
-            // add edges
-            const newEdge: dynamicLayoutItem_Item<FormField> = {
-                data: {
-                    type: 'Relation',
-                    name: item.name,
-                    label: item.caption,
-                    required: item.required ?? false,
-                    entityName: item.relatedEntity.name,
-                    converter: LookupToGraphQlFormat,
-                    tags: {
-                        displayField: entitySchema?.entity?.displayField?.name
-                    },
-                    ...((item.name == 'createdBy' || item.name == 'updatedBy') ? {
-                        enabled: false,
-                        visibleOnMode: [FormOpenMode.Edit]
-                    } : {})
-                }
-            };
-            (parentGroup as dynamicLayoutItem_Group<FormField>).children.push(newEdge);
-        });
+
+                const formRelation = getRelationByType(item as Edge);
+
+                // add edges
+                const newEdge: dynamicLayoutItem_Item<FormField> = {
+                    data: {
+                        ...formRelation,
+                        tags: {
+                            displayField: entity?.displayField?.name
+                        }
+                    }
+                };
+                
+                (parentGroup as dynamicLayoutItem_Group<FormField>).children.push(newEdge);
+            });
 
         return parentGroup;
 
-    }, [entitySchema]);
+    }, [entity]);
 
     return formSchema;
 }

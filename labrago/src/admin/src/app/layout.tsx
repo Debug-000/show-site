@@ -5,6 +5,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import { theme } from "@/styles/theme";
 import { ClientProviders } from "./providers";
+import { PRODUCT_NAME } from '@/config/CONST';
 
 interface RootLayoutProps {
     children: React.ReactNode;
@@ -14,7 +15,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
                 <link
                     rel="preconnect"
@@ -35,7 +35,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
 
 
-                <title>Golabra</title>
+                <title>{PRODUCT_NAME}</title>
 
             </head>
 

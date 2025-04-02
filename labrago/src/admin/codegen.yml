@@ -1,34 +1,14 @@
-# #schema: https://graphqlzero.almansi.me/api
-# schema: http://localhost:4000/query
-# documents:
-#   - "src/app/**/*.{ts,tsx}"
-# overwrite: true
-# generates:
-#   src/lib/graphql.tsx:
-#     config:
-#       withMutationFn: false
-#       addDocBlocks: false
-#       scalars:
-#         DateTime: string
-#     plugins:
-#       - add:
-#           content: "/* eslint-disable */"
-#       - typescript
-#       - typescript-operations
-#       - typescript-react-apollo
-
-
-
 schema: "http://localhost:4000/query"
 documents:
-  - "src/app/**/*.{ts,tsx}"
-  - "src/components/**/*.{ts,tsx}"
-  - "src/features/**/*.{ts,tsx}"
-  - "src/hooks/**/*.{ts,tsx}"
+#  - "src/app/**/*.{ts,tsx}"
+#  - "src/components/**/*.{ts,tsx}"
+#  - "src/core-features/**/*.{ts,tsx}"
+#  - "src/features/**/*.{ts,tsx}"
+#  - "src/hooks/**/*.{ts,tsx}"
 overwrite: true
 generates:
   src/lib/apollo/graphql.tsx:
     plugins:
       - "typescript"
       - typescript-operations
-      - typescript-react-apollo
+#      - typescript-react-apollo

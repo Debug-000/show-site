@@ -9,7 +9,6 @@ interface SettingsValueSelectProps<T> {
     options: Array<PrimitiveOption<T>>;
 }
 export const MenuItemSelect = <T,>(props: SettingsValueSelectProps<T>, ref: React.Ref<HTMLLIElement>) => {
-
     const { value, valueChange, options, ...other } = props;
 
     return (

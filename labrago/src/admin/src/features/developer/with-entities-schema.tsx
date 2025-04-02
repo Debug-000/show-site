@@ -15,6 +15,7 @@ export const WithEntitiesSchema = (Component: ComponentType<ShowGraphQlQueryProp
                 title="Entities Schema"
                 query={query.query}
                 variables={query.variables}
+                context={query.context}
             />
         );
     };

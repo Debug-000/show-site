@@ -5,6 +5,7 @@ import WrenchScrewdriverIcon from "@heroicons/react/24/outline/WrenchScrewdriver
 import { Button, ButtonProps, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, Popover, SvgIcon, Switch } from "@mui/material";
 import WifiIcon from '@mui/icons-material/Wifi';
 import React, { useMemo } from "react";
+import { ResponsiveButton } from "@/styles/button.responsive";
 
 
 interface MenuButtonProps {
@@ -39,12 +40,13 @@ export const MenuButton = (props: MenuButtonProps) => {
             ? React.cloneElement(props.slots.button as React.ReactElement, {
                 ...buttonProps
             }) 
-            : (<Button
+            : (<ResponsiveButton
                 variant="text"
                 size="medium"
                 {...buttonProps}
                 {...slotProps?.buttonProps}
-            >{text}</Button>)}
+            >
+                <span className="button-text">{text}</span></ResponsiveButton>)}
 
             <Menu
                 id="basic-menu"

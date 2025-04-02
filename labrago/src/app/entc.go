@@ -122,7 +122,6 @@ func main() {
 			CleanupUserFiles(),
 			CreateGraphqlUniqueInputs(),
 			CreateEntUniqueInputs(),
-			CreateEntityGraphql(),
 			CreateGraphqlSchema(),
 			CreateServiceInterface(),
 			CreateRepositoryInterface(),
@@ -133,7 +132,6 @@ func main() {
 			CreateServices(),
 			CreateResolverFile(),
 			CreateResolvers(),
-			CreateEntityResolver(),
 			// CreateExtendedTypes(),
 			// CreateExtendedTypeResolvers(),
 		},
@@ -754,55 +752,6 @@ func CreateTxRepo() gen.Hook {
 	}
 }
 
-func CreateEntityGraphql() gen.Hook {
-	errFormat := "[CreateEntityGraphql] %w"
-	return func(next gen.Generator) gen.Generator {
-		return gen.GenerateFunc(func(g *gen.Graph) error {
-			f, err := os.Create("./graphql/entity.graphql")
-
-			tmpl, err := templates.LoadTemplate("entity.graphql", "graphql/entity.graphql", templateFuncMap)
-			if err != nil {
-				return fmt.Errorf(errFormat, fmt.Errorf("error parsing template file: %w", err))
-			}
-
-			err = tmpl.Execute(f, g)
-			if err != nil {
-				f.Close()
-				return fmt.Errorf(errFormat, fmt.Errorf("error executing template: %w", err))
-			}
-
-			f.Close()
-			return next.Generate(g)
-		})
-	}
-}
-
-func CreateEntityResolver() gen.Hook {
-	errFormat := "[CreateEntityResolver] %w"
-	return func(next gen.Generator) gen.Generator {
-		return gen.GenerateFunc(func(g *gen.Graph) error {
-			f, err := os.Create("./domain/resolvers/entity.resolvers.go")
-			if err != nil {
-				return fmt.Errorf(errFormat, fmt.Errorf("error creating resolver file: %w", err))
-			}
-
-			tmpl, err := templates.LoadTemplate("entity.resolvers.go.tmpl", "resolver/entity.resolvers.go.tmpl", templateFuncMap)
-			if err != nil {
-				return fmt.Errorf(errFormat, fmt.Errorf("error parsing template file: %w", err))
-			}
-
-			err = tmpl.Execute(f, g)
-			if err != nil {
-				f.Close()
-				return fmt.Errorf(errFormat, fmt.Errorf("error executing template: %w", err))
-			}
-
-			f.Close()
-			return next.Generate(g)
-		})
-	}
-}
-
 func getExtendedTypes(fields []*gen.Field) []*gen.Field {
 	var extendedFields []*gen.Field
 	for _, field := range fields {
@@ -942,7 +891,7 @@ func CreateInputs(nodes []*gen.Type) map[string]map[string]string {
 }
 
 func GoInputName(isCreate bool, node *gen.Type, edge *gen.Edge) string {
-	input := InputName(node, edge)
+	input := InputName(isCreate, node, edge)
 	if !isCreate || edge.Optional {
 		input = "*" + input
 	}
@@ -950,19 +899,22 @@ func GoInputName(isCreate bool, node *gen.Type, edge *gen.Edge) string {
 }
 
 func GraphqlInputName(isCreate bool, node *gen.Type, edge *gen.Edge) string {
-	input := InputName(node, edge)
+	input := InputName(isCreate, node, edge)
 	if isCreate && !edge.Optional {
 		input += "!"
 	}
 	return input
 }
 
-func InputName(node *gen.Type, edge *gen.Edge) string {
-	input := ""
+func InputName(isCreate bool, node *gen.Type, edge *gen.Edge) string {
+	input := "Update"
+	if isCreate {
+		input = "Create"
+	}
 	if edge.Unique {
-		input += fmt.Sprintf("CreateOne%s", edge.Type.Name)
+		input += fmt.Sprintf("One%s", edge.Type.Name)
 	} else {
-		input += fmt.Sprintf("CreateMany%s", edge.Type.Name)
+		input += fmt.Sprintf("Many%s", edge.Type.Name)
 	}
 
 	if edge.Ref != nil && !edge.Ref.Optional {

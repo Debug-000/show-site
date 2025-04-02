@@ -9,7 +9,7 @@ interface SideNavItemProps {
     children?: ReactNode;
     collapse?: boolean;
     depth?: number;
-    external?: boolean;
+    externalLink?: boolean;
     icon?: ReactNode;
     openImmediately?: boolean;
     path?: string;
@@ -23,7 +23,7 @@ export const SideNavItem: React.FC<SideNavItemProps> = (props: SideNavItemProps)
         children,
         collapse = false,
         depth = 0,
-        external = false,
+        externalLink = false,
         icon,
         openImmediately = true,
         path,
@@ -107,7 +107,7 @@ export const SideNavItem: React.FC<SideNavItemProps> = (props: SideNavItemProps)
     // Leaf
 
     const linkProps = path
-        ? external
+        ? externalLink
             ? {
                 component: 'a',
                 href: path,
@@ -181,7 +181,7 @@ export const SideNavItem: React.FC<SideNavItemProps> = (props: SideNavItemProps)
                     {title}
                 </Box>
 
-                {external && (
+                {externalLink && (
                     <SvgIcon
                         sx={{
                             color: 'neutral.500',

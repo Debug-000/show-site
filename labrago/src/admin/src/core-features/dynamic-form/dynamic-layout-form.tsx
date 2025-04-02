@@ -31,10 +31,6 @@ interface DynamicFormProps {
 export const FormProvider = (props: PropsWithChildren<DynamicFormProps>) => {
     const dynamicForm = useDynamicForm({ initialOpenMode: props.openMode ?? FormOpenMode.New, initialLayout: props.layoutItems, defaultValue: props.defaultValue });
 
-    useEffect(() => {
-        console.log('dynamicForm.layoutItems', dynamicForm.layoutItems);
-    }, [dynamicForm])
-
     return (<DynamicFormContext.Provider value={dynamicForm}>
         <form onSubmit={dynamicForm.handleSubmit(props.onSubmit)} >
             {props.children}

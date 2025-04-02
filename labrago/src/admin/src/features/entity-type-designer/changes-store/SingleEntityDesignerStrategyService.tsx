@@ -1,4 +1,4 @@
-import { Entity } from '@/lib/apollo/graphql';
+import { Entity } from '@/lib/apollo/graphql.entities';
 import { IEntityDesignerStrategy, modifiedDisplayFieldVar, modifiedEntityChildrenVar, modifiedEntityVar } from './IEntityDesignerStrategy';
 import { ChangedFullEntity, ChangedNameCaptionEntity, DesignerEdge, DesignerEntityStatus, DesignerField } from '@/types/entity';
 import { generateEntityQuery } from '@/lib/apollo/utils/generateEntityQuery';

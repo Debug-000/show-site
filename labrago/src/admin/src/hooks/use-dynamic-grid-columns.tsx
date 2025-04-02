@@ -1,81 +1,149 @@
 import dayjs from 'dayjs';
-import { useMemo } from 'react';
+import { MutableRefObject, ReactNode, useMemo, useRef } from 'react';
 import { FormFieldTypes } from '@/types/field-type-descriptor';
 import { localeConfig } from "@/config/locale-config"
 import CheckIcon from '@mui/icons-material/Check';
 import { ColumnDef, useResponsivePin, useRowExpansionStore } from 'mosaic-data-table';
-import { Edge, Field } from '@/lib/apollo/graphql';
-import { Button, Typography } from '@mui/material';
+import { Edge, Field, RelationType } from '@/lib/apollo/graphql.entities';
+import { Avatar, Button, Stack, Typography } from '@mui/material';
+import { stringAvatar } from '@/lib/utils/avatar';
+
+export type ColumnOptions = {
+    hasSort?: boolean,
+    width?: number,
+}
 
 interface UseDynamicGridColumnsProps {
     fields?: Field[],
     edges?: Edge[],
     displayFieldName?: string,
-    expansionStore: ReturnType<typeof useRowExpansionStore>
+    expansionStore: ReturnType<typeof useRowExpansionStore>,
+    showId: boolean
 }
 export const useDynamicGridColumns = ({
     fields = [],
     edges = [],
     displayFieldName,
-    expansionStore
+    expansionStore,
+    showId
 }: UseDynamicGridColumnsProps): ColumnDef[] => {
 
     const displayFieldPin = useResponsivePin({ pin: 'left', breakpoint: 'sm', direction: 'up' });
 
+    const expansionStoreRef = useRef(expansionStore);
+    expansionStoreRef.current = expansionStore;
+
     return useMemo(() => (
         [
-            ...fieldsToColumns(fields).map(i => i.id === displayFieldName ? {
-                ...i,
-                pin: displayFieldPin,
-                highlight: true
-            } : i),
-            ...edgesToColumns(edges, expansionStore),
+            ...fields
+                .filter(i => showId ? true : i.name != 'id')
+                .filter(i => !i.private) // TODO: this should be hidden from BE
+                .filter(i => i.type != 'RichText') // TODO: set RichText based on configuration
+                .filter(i => i.type != 'Json') // TODO: set JSON based on configuration
+                .map(i => fieldToColumn(i))
+                .map(i => i.id === displayFieldName ? {
+                    ...i,
+                    pin: displayFieldPin,
+                    highlight: true
+                } : i),
+            ...edges.map(i => edgeToColumn(i, expansionStoreRef)),
         ]
-    ), [displayFieldPin, displayFieldName, fields, edges, expansionStore]);
+    ), [displayFieldPin, showId, displayFieldName, fields, edges]);
 }
 
-const shortTextColumnDef = (name: string, caption: string, hasSort: boolean, render: (row: any) => string): ColumnDef<any> => {
+
+const fieldToColumn = (field: Field): ColumnDef<Field> => {
+
+    // Add avatar for name column
+    if (field.name == 'name' && field.type == 'ShortText') {
+        return shortTextColumnDef(field.name, field.caption, (row: any) => {
+            const cellValue = row[field.name];
+            const avatarProps = stringAvatar(cellValue);
+            return (<Stack direction="row" gap={1} alignItems="center">
+                <Avatar sx={{ width: 24, height: 24, fontSize: '0.875rem', ...avatarProps.sx }} >{avatarProps.children}</Avatar>
+                {cellValue}
+            </Stack>)
+        }, {
+            width: 180,
+            hasSort: true
+        });
+    }
+
+    switch (field.type as FormFieldTypes) {
+        case 'ShortText': return shortTextColumnDef(field.name, field.caption, (row: any) => row[field.name], { hasSort: true });
+        case 'LongText': return longTextColumnDef(field.name, field.caption, (row: any) => row[field.name], { hasSort: true });
+        case 'RichText': return richTextColumnDef(field.name, field.caption, (row: any) => row[field.name], { hasSort: true });
+        case 'Integer': return integerColumnDef(field.name, field.caption, (row: any) => row[field.name], { hasSort: true });
+        case 'DateTime': return dateTimeColumnDef(field.name, field.caption, (row: any) => row[field.name], { hasSort: true });
+        case 'Date': return dateColumnDef(field.name, field.caption, (row: any) => row[field.name], { hasSort: true });
+        case 'Time': return timeColumnDef(field.name, field.caption, (row: any) => row[field.name], { hasSort: true });
+        case 'Boolean': return booleanColumnDef(field.name, field.caption, (row: any) => row[field.name], { hasSort: true });
+        default: return shortTextColumnDef(field.name, field.caption, (row: any) => row[field.name], { hasSort: true });
+    }
+}
+
+const edgeToColumn = (edge: Edge, expansionStore: MutableRefObject<ReturnType<typeof useRowExpansionStore>>): ColumnDef<Edge> => {
+
+    switch (edge.relationType) {
+        case RelationType.One:
+        case RelationType.OneToOne:
+        case RelationType.OneToMany:
+            return oneColumnDef(edge, expansionStore);
+        case RelationType.Many:
+        case RelationType.ManyToOne:
+        case RelationType.ManyToMany:
+            return manyColumnDef(edge, expansionStore);
+    }
+
+    return {
+        id: edge.name,
+        header: '',
+        cell: (row: any) => ''
+    }
+}
+
+const shortTextColumnDef = (name: string, caption: string, render: (row: any) => ReactNode, options?: ColumnOptions): ColumnDef<any> => {
 
     return {
         id: name,
         header: caption,
         cell: (row: any) => render(row),
-        width: 150,
-        hasSort: hasSort
+        width: options?.width ?? 180,
+        hasSort: options?.hasSort ?? false
     };
 }
 
-const longTextColumnDef = (name: string, caption: string, hasSort: boolean, render: (row: any) => string): ColumnDef<any> => {
+const longTextColumnDef = (name: string, caption: string, render: (row: any) => string, options?: ColumnOptions): ColumnDef<any> => {
     return {
         id: name,
         header: caption,
         cell: (row: any) => render(row),
-        width: 300,
-        hasSort: hasSort
+        width: options?.width ?? 300,
+        hasSort: options?.hasSort ?? false
     };
 }
 
-const richTextColumnDef = (name: string, caption: string, hasSort: boolean, render: (row: any) => string): ColumnDef<any> => {
+const richTextColumnDef = (name: string, caption: string, render: (row: any) => string, options?: ColumnOptions): ColumnDef<any> => {
     return {
         id: name,
         header: caption,
         cell: (row: any) => render(row),
-        width: 300,
-        hasSort: hasSort
+        width: options?.width ?? 300,
+        hasSort: options?.hasSort ?? false
     };
 }
 
-const integerColumnDef = (name: string, caption: string, hasSort: boolean, render: (row: any) => number): ColumnDef<any> => {
+const integerColumnDef = (name: string, caption: string, render: (row: any) => number, options?: ColumnOptions): ColumnDef<any> => {
     return {
         id: name,
         header: caption,
         cell: (row: any) => render(row),
-        width: 150,
-        hasSort: hasSort
+        width: options?.width ?? 150,
+        hasSort: options?.hasSort ?? false
     };
 }
 
-const dateTimeColumnDef = (name: string, caption: string, hasSort: boolean, render: (row: any) => string): ColumnDef<any> => {
+const dateTimeColumnDef = (name: string, caption: string, render: (row: any) => string, options?: ColumnOptions): ColumnDef<any> => {
     return {
         id: name,
         header: caption,
@@ -89,12 +157,12 @@ const dateTimeColumnDef = (name: string, caption: string, hasSort: boolean, rend
             return dayjs(value).format(localeConfig.dateTime.displayFormat);
 
         },
-        width: 210,
-        hasSort: hasSort
+        width: options?.width ?? 210,
+        hasSort: options?.hasSort ?? false
     };
 }
 
-const dateColumnDef = (name: string, caption: string, hasSort: boolean, render: (row: any) => string): ColumnDef<any> => {
+const dateColumnDef = (name: string, caption: string, render: (row: any) => string, options?: ColumnOptions): ColumnDef<any> => {
     return {
         id: name,
         header: caption,
@@ -108,12 +176,12 @@ const dateColumnDef = (name: string, caption: string, hasSort: boolean, render: 
             return dayjs(value).format(localeConfig.date.displayFormat);
 
         },
-        width: 120,
-        hasSort: hasSort
+        width: options?.width ?? 120,
+        hasSort: options?.hasSort ?? false
     };
 }
 
-const timeColumnDef = (name: string, caption: string, hasSort: boolean, render: (row: any) => string): ColumnDef<any> => {
+const timeColumnDef = (name: string, caption: string, render: (row: any) => string, options?: ColumnOptions): ColumnDef<any> => {
     return {
         id: name,
         header: caption,
@@ -127,12 +195,12 @@ const timeColumnDef = (name: string, caption: string, hasSort: boolean, render: 
             return dayjs(value).format(localeConfig.time.displayFormat);
 
         },
-        width: 180,
-        hasSort: hasSort
+        width: options?.width ?? 180,
+        hasSort: options?.hasSort ?? false
     };
 }
 
-const booleanColumnDef = (name: string, caption: string, hasSort: boolean, render: (row: any) => string): ColumnDef<any> => {
+const booleanColumnDef = (name: string, caption: string, render: (row: any) => string, options?: ColumnOptions): ColumnDef<any> => {
     return {
         id: name,
         header: caption,
@@ -146,73 +214,61 @@ const booleanColumnDef = (name: string, caption: string, hasSort: boolean, rende
             return (<CheckIcon />)
 
         },
-        width: 120,
-        hasSort: hasSort
+        width: options?.width ?? 120,
+        hasSort: options?.hasSort ?? false
     };
 }
 
-const fieldToColumn = (field: Field): ColumnDef<Field> => {
+const oneColumnDef = (edge: Edge, expansionStore: MutableRefObject<ReturnType<typeof useRowExpansionStore>>, options?: ColumnOptions): ColumnDef<any> => {
 
-    switch (field.type as FormFieldTypes) {
-        case 'ShortText': return shortTextColumnDef(field.name, field.caption, true, (row: any) => row[field.name]);
-        case 'LongText': return longTextColumnDef(field.name, field.caption, true, (row: any) => row[field.name]);
-        case 'RichText': return richTextColumnDef(field.name, field.caption, true, (row: any) => row[field.name]);
-        case 'Integer': return integerColumnDef(field.name, field.caption, true, (row: any) => row[field.name]);
-        case 'DateTime': return dateTimeColumnDef(field.name, field.caption, true, (row: any) => row[field.name]);
-        case 'Date': return dateColumnDef(field.name, field.caption, true, (row: any) => row[field.name]);
-        case 'Time': return timeColumnDef(field.name, field.caption, true, (row: any) => row[field.name]);
-        case 'Boolean': return booleanColumnDef(field.name, field.caption, true, (row: any) => row[field.name]);
-        default: return shortTextColumnDef(field.name, field.caption, true, (row: any) => row[field.name]);
-    }
-}
-
-const edgeToColumn = (edge: Edge, expansionStore: ReturnType<typeof useRowExpansionStore>): ColumnDef<Edge> => {
-
-    return shortTextColumnDef(edge.name, edge.caption, false, (row: any) => {
-        const entityValue = row[edge.name];
-        if (!entityValue) {
-            return '';
-        }
-
-
-        return <Button
-            variant="text"
-            sx={{
-                padding: 0
-            }}
-            onClick={() => {
-
-                const rowStatus = expansionStore.expansionState[row.id];
-                const isExpanded = rowStatus?.isOpen ?? false;
-                const shouldBeExpanded = isExpanded == false ? true : (rowStatus.params.entityName != edge.relatedEntity.name || rowStatus.params.entryId != entityValue.id);
-
-                expansionStore.setParams({
-                    rowId: row.id,
-                    params: {
-                        entityName: edge.relatedEntity.name,
-                        entryId: entityValue.id
-                    },
-                    openImmediately: shouldBeExpanded
-                })
+    return {
+        id: edge.name,
+        header: edge.caption,
+        cell: (row: any) => {
+            const entityValue = row[edge.name];
+            if (!entityValue) {
+                return '';
             }
-            }
-        ><Typography
-            color="text.primary"
-            variant='body2'
-            sx={{ textDecoration: 'underline' }}>{entityValue.name}</Typography></Button>
 
-        return entityValue.name;
-    });
+            const displayValue = entityValue[edge.relatedEntity.displayField.name];
+
+            return <Button
+                variant="text"
+                sx={{
+                    padding: 0
+                }}
+                onClick={() => {
+
+                    const rowStatus = expansionStore.current.expansionState[row.id];
+                    const isExpanded = rowStatus?.isOpen ?? false;
+                    const shouldBeExpanded = isExpanded == false ? true : (rowStatus.params.entityName != edge.relatedEntity.name || rowStatus.params.entryId != entityValue.id);
+
+                    expansionStore.current.setParams({
+                        rowId: row.id,
+                        params: {
+                            entityName: edge.relatedEntity.name,
+                            entryId: entityValue.id
+                        },
+                        openImmediately: shouldBeExpanded
+                    })
+                }}>
+                <Typography
+                    color="text.primary"
+                    variant='body2'
+                    sx={{ textDecoration: 'underline' }}>{displayValue}</Typography></Button>
+        },
+        width: options?.width ?? 180,
+        hasSort: options?.hasSort ?? false
+    };
 }
 
-const fieldsToColumns = (fields: Field[]): ColumnDef<Field>[] => {
-    return fields
-        .filter(i => i.name != 'id') // TODO: set id based on configuration
-        .filter(i => i.type != 'RichText') // TODO: set RichText based on configuration
-        .filter(i => i.type != 'Json') // TODO: set JSON based on configuration
-        .map(i => fieldToColumn(i));
+const manyColumnDef = (edge: Edge, expansionStore: MutableRefObject<ReturnType<typeof useRowExpansionStore>>, options?: ColumnOptions): ColumnDef<any> => {
+    return {
+        id: edge.name,
+        header: edge.caption,
+        cell: (row: any) => <Typography color="text.secondary" sx={{textDecoration: 'underline', fontSize: '14px', opacity: .5}}>View</Typography>,
+        width: options?.width ?? 180,
+        hasSort: options?.hasSort ?? false
+    };
 }
 
-const edgesToColumns = (edge: Edge[], expansionStore: ReturnType<typeof useRowExpansionStore>): ColumnDef<Edge>[] => {
-    return edge.map(i => edgeToColumn(i, expansionStore));
-}

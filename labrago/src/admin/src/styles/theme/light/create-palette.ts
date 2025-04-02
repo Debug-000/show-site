@@ -42,6 +42,9 @@ export const createPalette = (config: Config): ColorSystemOptions['palette'] => 
 
     Switch: {
 
+    }, 
+    Avatar: {
+        defaultBg: 'var(--mui-palette-text-primary)'
     }
   };
 };

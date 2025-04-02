@@ -1,5 +1,5 @@
 import { AdvancedFilter } from "@/core-features/dynamic-filter/filter";
-import { Field } from "@/lib/apollo/graphql";
+import { Field } from "@/lib/apollo/graphql.entities";
 import { Filter } from "mosaic-data-table";
 
 export const getAdvancedFiltersFromGridFilter = (filter: Filter, fields: Field[]): AdvancedFilter[] => {

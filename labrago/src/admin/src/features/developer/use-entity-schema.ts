@@ -1,4 +1,5 @@
 import { useFullEntity } from "@/hooks/use-entities";
+import { ENTITY_CONTEXT } from "@/lib/apollo/apolloWrapper";
 import { GqlDataDELETEMutationBuilder } from "@/lib/apollo/builders/gqlMutationBuilder";
 import { useMemo } from "react";
 
@@ -62,6 +63,7 @@ export const useEntitySchema = (entityName: string | null) => {
 
     return useMemo(() => ({
         query: entitySchemaQuery,
-        variables
+        variables,
+        context: ENTITY_CONTEXT
     }), []);
 }

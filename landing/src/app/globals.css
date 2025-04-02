@@ -6,7 +6,6 @@
   --lm-text: #282f3d;
   --lm-bg: #ffffff;
 }
-
 body {
   background: var(--lm-bg);
   color: var(--lm-text);
@@ -23,4 +22,26 @@ body {
 }
 .scaled:hover {
   transform: scale(0.95);
+}
+
+.box {
+  transform: perspective(60rem) rotateY(-20deg);
+}
+
+@media (max-width: 1024px) {
+  .box {
+    transform: none;
+  }
+
+  .clip-path {
+    clip-path: none;
+  }
+}
+
+.drop-shadow {
+  filter: drop-shadow(0 0 0.5rem #1447e6);
+}
+
+.blue-color {
+  color: #1447e6;
 }

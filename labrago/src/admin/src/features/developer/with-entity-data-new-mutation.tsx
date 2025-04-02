@@ -17,6 +17,7 @@ export const WithEntityDataNewMutation = (Component: ComponentType<ShowGraphQlQu
                 title="Create new Entry"
                 query={query.query}
                 variables={query.variables}
+                context={null}
             />
         )
     };

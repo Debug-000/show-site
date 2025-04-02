@@ -30,7 +30,8 @@ type SelectField = BaseFormField<'Select'> & { options: Options };
 type TagsSelectField = BaseFormField<'TagsSelect'> & { options: Options };
 type SingleChoiceField = BaseFormField<'SingleChoice'> & { options: Options };
 type MultipleChoiceField = BaseFormField<'MultipleChoice'> & { options: Options };
-type RelationField = BaseFormField<'Relation'> & { entityName: string };
+type RelationOneField = BaseFormField<'RelationOne'> & { entityName: string };
+type RelationManyField = BaseFormField<'RelationMany'> & { entityName: string };
 
 export type FormField = 
   | BaseFormField
@@ -38,7 +39,8 @@ export type FormField =
   | TagsSelectField
   | SingleChoiceField
   | MultipleChoiceField
-  | RelationField;
+  | RelationOneField
+  | RelationManyField;
 
 export type PrimitiveOption<T = string | number | boolean | null> = {
     label: string;

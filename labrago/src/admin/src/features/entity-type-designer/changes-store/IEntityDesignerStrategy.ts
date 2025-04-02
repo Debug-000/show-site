@@ -1,6 +1,6 @@
 import { ChangedFullEntity, ChangedNameCaptionEntity, DesignerEdge, DesignerField } from "@/types/entity";
 import { makeVar } from "@apollo/client";
-import { Edge, Field } from "@/lib/apollo/graphql";
+import { Edge, Field } from "@/lib/apollo/graphql.entities";
 
 export const modifiedEntityVar = makeVar<ChangedNameCaptionEntity[]>([]);
 export const modifiedDisplayFieldVar = makeVar<Record<string, string>>({});

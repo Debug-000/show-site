@@ -1,7 +1,7 @@
 import { SvgIcon } from "@mui/material";
 import { ReactNode } from "react";
-import EditIcon from "@/icons/iconly/bulk/edit";
-import CategoryIcon from "@/icons/iconly/bulk/category";
+import EditIcon from "@/assets/icons/iconly/bulk/edit";
+import CategoryIcon from "@/assets/icons/iconly/bulk/category";
 
 export interface NavBarItem {
     //external?: boolean;

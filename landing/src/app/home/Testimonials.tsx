@@ -39,7 +39,7 @@ export default function Testimonials() {
   };
 
   return (
-    <div className="flex justify-center flex-col items-center my-[30rem] max-w-[1440px] mx-auto px-12 text-white py-[10rem]">
+    <div className="flex justify-center flex-col items-center md:my-[30rem] my-[10rem] max-w-[1440px] mx-auto px-12 text-white py-[10rem]">
       <h5 className="bg-neutral-100 w-fit px-4 py-2 rounded-4xl tracking-wider font-black text-blue-700">
         They love us
       </h5>
@@ -55,9 +55,8 @@ export default function Testimonials() {
             &quot;
           </p>
 
-          {/* Testimonial Image */}
           <Image
-            src={User} // Assuming each testimonial has an image property
+            src={User}
             width={100}
             height={100}
             alt="User"
@@ -68,10 +67,9 @@ export default function Testimonials() {
             - {testimonials[currentIndex].name}
           </p>
 
-          {/* Animated Testimonial Text */}
           <motion.h3
-            className="max-w-[40rem] h-[10rem] text-center font-semibold text-[1.3rem] italic"
-            key={currentIndex} // Key will trigger reanimation on change
+            className="md:max-w-[40rem] max-w-full h-[10rem] text-center font-semibold text-[1.3rem] italic"
+            key={currentIndex}
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}

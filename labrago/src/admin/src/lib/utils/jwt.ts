@@ -1,86 +1,37 @@
-/* eslint-disable no-bitwise */
-export const JWT_SECRET = 'devias-top-secret-key';
-export const JWT_EXPIRES_IN = 3600 * 24 * 2; // 2 days
+import { jwtDecode } from "jwt-decode";
 
-// Since we are unable to sign a JWT in a browser
-// because "jsonwebtoken" library is available on server side only, NodeJS environment
-// we simply simulate a signed token, no complex checks because on server side
-// you're using the library
-export const sign = (
-  payload: Record<string, any>,
-  privateKey: string,
-  header: Record<string, any>
-) => {
-  const now = new Date();
-  const newHeader = { ...header };
-  newHeader.expiresIn = new Date(now.getTime() + newHeader.expiresIn);
-  const encodedHeader = btoa(JSON.stringify(newHeader));
-  const encodedPayload = btoa(JSON.stringify(payload));
-  const signature = btoa(
-    Array
-      .from(encodedPayload)
-      .map((item, key) => (
-        String.fromCharCode(item.charCodeAt(0) ^ privateKey[key % privateKey.length].charCodeAt(0))
-      ))
-      .join('')
-  );
+export const isJwtValid = (accessToken?: string | null): boolean => {
 
-  return `${encodedHeader}.${encodedPayload}.${signature}`;
-};
+    if(!accessToken) {
+        return false;
+    }
 
-// Since we create a fake signed token, we have to implement a fake jwt decode
-// platform to simulate "jwt-decode" library.
-export const decode = (token: string): any => {
-  const [encodedHeader, encodedPayload, signature] = token.split('.');
-  const header = JSON.parse(atob(encodedHeader));
-  const payload = JSON.parse(atob(encodedPayload));
-  const now = new Date();
+    const decoded = jwtDecode(accessToken);
+    const currentTime = Date.now() / 1000;
+    if (decoded.exp && decoded.exp < currentTime) {
+        return false;
+    }
 
-  if (now < header.expiresIn) {
-    throw new Error('Expired token');
-  }
+    return true;
+}
 
-  const verifiedSignature = btoa(
-    Array
-      .from(encodedPayload)
-      .map((item, key) => (
-        String.fromCharCode(item.charCodeAt(0) ^ JWT_SECRET[key % JWT_SECRET.length].charCodeAt(0))
-      ))
-      .join('')
-  );
 
-  if (verifiedSignature !== signature) {
-    throw new Error('Invalid signature');
-  }
+export const getJwtSub = (accessToken?: string | null): string | null | undefined => {
 
-  return payload;
-};
+    if(!accessToken) {
+        return null;
+    }
 
-export const verify = (
-  token: string,
-  privateKey: string
-): Record<string, any> => {
-  const [encodedHeader, encodedPayload, signature] = token.split('.');
-  const header = JSON.parse(atob(encodedHeader));
-  const payload = JSON.parse(atob(encodedPayload));
-  const now = new Date();
+    const decoded = jwtDecode(accessToken);
+    return decoded.sub;
+}
 
-  if (now < header.expiresIn) {
-    throw new Error('Expired token');
-  }
+export const getJwtRole = (accessToken?: string | null): string | null | undefined => {
 
-  const verifiedSignature = btoa(
-    Array
-      .from(encodedPayload)
-      .map((item, key) => (
-        String.fromCharCode(item.charCodeAt(0) ^ privateKey[key % privateKey.length].charCodeAt(0))
-      ))
-      .join('')
-  );
+    if(!accessToken) {
+        return null;
+    }
 
-  if (verifiedSignature !== signature) {
-    throw new Error('Invalid signature');
-  }
-
-  return payload;
-};
+    const decoded = jwtDecode<{role: string}>(accessToken);
+    return decoded.role;
+}

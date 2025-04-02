@@ -24,6 +24,9 @@ import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import WrenchScrewdriverIcon from '@heroicons/react/24/outline/WrenchScrewdriverIcon';
+import { MenuItemToggle } from '@/shared/components/menu/menu-item-toggle';
+import { useContentManagerSearch } from '@/hooks/use-content-manager-search';
+import { ResponsiveButton } from '@/styles/button.responsive';
 
 export type SearchField = {
     label: string;
@@ -37,9 +40,11 @@ interface OrdersSearchProps {
     headCells?: ColumnDef[];
     disabled?: boolean;
     onRefresh?: () => void;
+
     filters?: AdvancedFilter[];
-    onFiltersApply?: (filters: AdvancedFilter[]) => void;
-    onFiltersClear?: () => void;
+    onAdvancedFiltersApply?: (filters: AdvancedFilter[]) => void;
+    onAdvancedFiltersClear?: () => void;
+
     onQueryChange?: (query: string) => void;
     query?: string;
     selected?: string[];
@@ -50,27 +55,16 @@ interface OrdersSearchProps {
 
     filterEnabled: boolean;
     onFilterEnabledChange?: (enabled: boolean) => void;
+
+    contentManagerSearch: ReturnType<typeof useContentManagerSearch>;
+
+    showId: boolean;
+    onShowIdChange: (showId: boolean) => void;
 }
-export const ContentManagerSearch: FC<OrdersSearchProps> = (props) => {
+export const ContentManagerSearch = (props: OrdersSearchProps) => {
 
-    const {
-        //fields = [], 
-        headCells, disabled = false, filters = [], onFiltersApply, onFiltersClear, onQueryChange, query = '', selected = [], onBulkDelete } = props;
-    //const filterDialog = useContentManagerFilterDialog({ fields });
-    const contentManagerSearch = useContentManagerSearchFromQuery();
-
-    // const handleFiltersApply = useCallback((filters: AdvancedFilter[]) => {
-    //     filterDialog.dialog.handleClose();
-    //     onFiltersApply?.(filters);
-    // }, [filterDialog, onFiltersApply]);
-
-    // const handleFiltersClear = useCallback((): void => {
-    //     filterDialog.dialog.handleClose();
-    //     onFiltersClear?.();
-    // }, [filterDialog, onFiltersClear]);
-
+    const { headCells, disabled = false, filters = [], onQueryChange, query = '', selected = [], onBulkDelete } = props;
     const hasSelection = selected.length > 0;
-    const hasFilters = filters.length > 0;
 
     return (
         <>
@@ -110,72 +104,83 @@ export const ContentManagerSearch: FC<OrdersSearchProps> = (props) => {
                             value={query}
                         />
 
-                        <Button
-                            disabled={disabled}
-                            onClick={() => props.onSelectionEnabledChange?.(!props.selectionEnabled)}
-                            size="medium"
-                            startIcon={(
-                                <SvgIcon fontSize="small">
-                                    <ChecklistIcon />
-                                </SvgIcon>
-                            )}
-                            variant={props.selectionEnabled ? 'contained' : 'text'}
-                            aria-haspopup="dialog"
-                        >
-                            Selection
-                        </Button>
+                        <Stack
+                            direction="row"
+                            gap={2}
+                            justifyContent="end">
 
-                        <Button
-                            disabled={disabled}
-                            onClick={() => {
-                                var newValue = !props.filterEnabled;
-                                props.onFilterEnabledChange?.(newValue);
-                                if (!newValue) {
-                                    contentManagerSearch.handleFiltersApply({});
-                                }
-                            }}
-                            size="medium"
-                            startIcon={(
-                                <SvgIcon fontSize="small">
-                                    <FilterAltIcon />
-                                </SvgIcon>
-                            )}
-                            variant={props.filterEnabled ? 'contained' : 'text'}
-                            aria-haspopup="dialog"
-                        >
-                            Filter
-                        </Button>
+                            <ResponsiveButton
+                                disabled={disabled}
+                                onClick={() => props.onSelectionEnabledChange?.(!props.selectionEnabled)}
+                                size="medium"
+                                startIcon={(
+                                    <SvgIcon fontSize="small">
+                                        <ChecklistIcon />
+                                    </SvgIcon>
+                                )}
+                                variant={props.selectionEnabled ? 'contained' : 'text'}
+                                aria-haspopup="dialog"
+                            >
+                                <span className="button-text">Selection</span>
+                            </ResponsiveButton>
 
-                        <MenuButton
-                            text="Configure"
-                            slotProps={{
-                                buttonProps: { 
-                                    startIcon:(
-                                        <SvgIcon style={{ fontSize: 18 }} >
-                                            <WrenchScrewdriverIcon />
-                                        </SvgIcon>)
-                                    
-                                 }
-                            }}>
+                            <ResponsiveButton
+                                disabled={disabled}
+                                onClick={() => {
+                                    var newValue = !props.filterEnabled;
+                                    props.onFilterEnabledChange?.(newValue);
+                                    if (!newValue) {
+                                        props.contentManagerSearch.handleFiltersApply({});
+                                    }
+                                }}
+                                size="medium"
+                                startIcon={(
+                                    <SvgIcon fontSize="small">
+                                        <FilterAltIcon />
+                                    </SvgIcon>
+                                )}
+                                variant={props.filterEnabled ? 'contained' : 'text'}
+                                aria-haspopup="dialog"
+                            >
+                                <span className="button-text">Filter</span>
+                            </ResponsiveButton>
 
-                            <MenuItem>
-                                <ListItemText>Rows per page</ListItemText>
-                                <MenuItemSelect<number>
-                                    value={contentManagerSearch.state.rowsPerPage}
-                                    valueChange={(value) => { contentManagerSearch.handleRowsPerPageChange(value) }}
-                                    options={[
-                                        { label: '10', value: 10 },
-                                        { label: '50', value: 50 },
-                                        { label: '100', value: 100 }]}
-                                />
-                            </MenuItem>
+                            <MenuButton
+                                text="Configure"
+                                slotProps={{
+                                    buttonProps: {
+                                        startIcon: (
+                                            <SvgIcon style={{ fontSize: 18 }} >
+                                                <WrenchScrewdriverIcon />
+                                            </SvgIcon>)
+                                    }
+                                }}>
 
+                                <MenuItem>
+                                    <ListItemText>Show Id Column</ListItemText>
+                                    <MenuItemToggle value={props.showId} valueChange={(value) => { props.onShowIdChange(value) }} />
+                                </MenuItem>
 
-                        </MenuButton>
+                                <MenuItem>
+                                    <ListItemText>Rows per page</ListItemText>
+                                    <MenuItemSelect<number>
+
+                                        value={props.contentManagerSearch.state.rowsPerPage}
+                                        valueChange={(value) => { props.contentManagerSearch.handleRowsPerPageChange(value) }}
+                                        options={[
+                                            { label: '10', value: 10 },
+                                            { label: '50', value: 50 },
+                                            { label: '100', value: 100 }]}
+                                    />
+                                </MenuItem>
+
+                            </MenuButton>
+
+                        </Stack>
 
                     </Stack>
 
-                    {!!Object.keys(contentManagerSearch.state.filter).length && (<FilterEditor filter={contentManagerSearch.state.filter} onChange={contentManagerSearch.handleFiltersApply} headCells={headCells} />)}
+                    {!!Object.keys(props.contentManagerSearch.state.filter).length && (<FilterEditor filter={props.contentManagerSearch.state.filter} onChange={props.contentManagerSearch.handleFiltersApply} headCells={headCells} />)}
                 </Stack>
             </div>
             {/* <FilterDialog

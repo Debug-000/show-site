@@ -27,9 +27,9 @@ export const neutral: NeutralColors = {
 };
 
 export const blue = withAlphas({
-  light: '#699ef5',
+  light: 'color-mix(in srgb, var(--mui-palette-primary-main), var(--mui-palette-common-onBackground) 30%)',
   main: '#3273dd',
-  dark: '#2f69c7',
+  dark: 'color-mix(in srgb, var(--mui-palette-primary-main), var(--mui-palette-common-background) 30%)',
   contrastText: '#FFFFFF'
 });
 

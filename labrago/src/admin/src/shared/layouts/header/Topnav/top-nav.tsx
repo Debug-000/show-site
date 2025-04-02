@@ -1,6 +1,6 @@
 import { alpha, Box, ButtonBase, PaletteColor, Stack, styled } from "@mui/material";
-import EditIcon from "@/icons/iconly/bulk/edit";
-import CategoryIcon from "@/icons/iconly/bulk/category";
+import EditIcon from "@/assets/icons/iconly/bulk/edit";
+import CategoryIcon from "@/assets/icons/iconly/bulk/category";
 import { usePathname } from "next/navigation";
 import NextLink from 'next/link';
 import { paths } from "@/lib/paths";
@@ -12,7 +12,7 @@ interface MenuItemProps {
     text: string;
     path: string;
     pathname: string;
-    external?: boolean;
+    externalLink?: boolean;
 }
 export const MenuItem = (props: MenuItemProps) => {
     const { icon, text, path, pathname } = props;
@@ -24,7 +24,7 @@ export const MenuItem = (props: MenuItemProps) => {
     const active = partialMatch;
 
 
-    const linkProps = props.external
+    const linkProps = props.externalLink
         ? {
             component: 'a',
             href: path,
@@ -41,7 +41,7 @@ export const MenuItem = (props: MenuItemProps) => {
             sx={{
                 alignItems: 'center',
                 //color: 'text.secondary',
-                color: 'text.primary',
+                color: 'primary.light',
                 borderRadius: '3px',
                 display: 'flex',
                 fontFamily: (theme) => theme.typography.fontFamily,
@@ -55,7 +55,7 @@ export const MenuItem = (props: MenuItemProps) => {
                 width: '100%',
                 ...(!active && {
                     //backgroundColor: 'background.default'
-                    color: 'text.secondary'
+                    color: 'text.primary'
                 }),
                 '&:focus-visible': {
                     backgroundColor: (theme) => theme.palette.action.selected
@@ -84,7 +84,7 @@ export const MenuItem = (props: MenuItemProps) => {
 
                 <Stack direction="row" alignItems="center" gap="5px">
                     {text}
-                    {props.external && <HiExternalLink />}
+                    {props.externalLink && <HiExternalLink />}
                 </Stack>
             </Stack>
 
@@ -103,7 +103,7 @@ export const Topnav = (props: TopnavProps) => {
     return (
         <Box component="nav">
 
-            <Stack component="ul" margin={0} direction={direction ?? "row"} gap={1} px={2}>
+            <Stack component="ul" margin={0} direction={direction ?? "row"} gap={1} px={0}>
                 <Box component="li" sx={{ listStyle: 'none' }}>
                     <MenuItem
                         icon={<EditIcon />}

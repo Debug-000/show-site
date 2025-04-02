@@ -83,4 +83,7 @@ models:
   UpdateManyEdgesInput:
     model:
       - github.com/GoLabra/labrago/src/api/entgql/entity.UpdateManyEdgesInput
+  AppStatus:
+    model:
+      - github.com/GoLabra/labrago/src/api/subscription.AppStatus
 

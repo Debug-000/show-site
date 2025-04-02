@@ -1,4 +1,4 @@
-    {{- define "recursive_operations_after_update" }}
+{{- define "recursive_operations_after_update" }}
     {{- $isPointer := $.Optional }}
     {{- if $.Unique }}
         if data.{{ Pascal $.Name }}.Connect != nil {
@@ -8,6 +8,9 @@
             }
             data.{{ Pascal $.Name }}ID =  {{ if $isPointer }}&{{ end }}toConnect.ID
         }
+		if data.{{ Pascal $.Name }}.Unset != nil && *data.{{ Pascal $.Name }}.Unset {
+			data.Clear{{ Pascal $.Name }} = true
+		}
         if data.{{ Pascal $.Name }}.Create != nil {
             var createInput ent.Create{{ $.Type.Name }}Input
             err = mapstructure.Decode(data.{{ Pascal $.Name }}.Create, &createInput)
@@ -26,7 +29,7 @@
 
             data.{{ Pascal $.Name }}ID = {{ if $isPointer }}&{{ end }}toConnect.ID
         }
-        {{- else }}
+    {{- else }}
         if data.{{ Pascal $.Name }}.Connect != nil {
             for _, connect := range data.{{ Pascal $.Name }}.Connect {
                 toConnect, err := repository.{{ $.Type.Name }}.GetOneTx(ctx, tx, connect)
@@ -38,6 +41,17 @@
                 data.Add{{ Singular (Pascal $.Name) }}IDs = append(data.Add{{ Singular (Pascal $.Name) }}IDs , toConnect.ID)
             }
         }
+		if data.{{ Pascal $.Name }}.Disconnect != nil {
+			for _, disconnect := range data.{{ Pascal $.Name }}.Disconnect {
+				toDisconnect, err := repository.{{ $.Type.Name }}.GetOneTx(ctx, tx, disconnect)
+
+				if err != nil {
+					return nil, err
+				}
+
+				data.Remove{{ Singular (Pascal $.Name) }}IDs = append(data.Remove{{ Singular (Pascal $.Name) }}IDs, toDisconnect.ID)
+			}
+		}
         if data.{{ Pascal $.Name }}.Create != nil {
             for _, create := range data.{{ Pascal $.Name }}.Create {
                 var createInput ent.Create{{ $.Type.Name }}Input
@@ -58,5 +72,5 @@
                 data.Add{{ Singular (Pascal $.Name) }}IDs = append(data.Add{{ Singular (Pascal $.Name) }}IDs , toConnect.ID)
             }
         }
-        {{- end }}
     {{- end }}
+{{- end }}

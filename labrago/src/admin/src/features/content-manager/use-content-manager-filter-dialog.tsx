@@ -1,7 +1,7 @@
 
 import { FieldScalarTypes } from "@/types/field-type-descriptor";
 import { useMemo } from "react";
-import { Field } from "@/lib/apollo/graphql";
+import { Field } from "@/lib/apollo/graphql.entities";
 import { AdvancedFilter, AdvanedFilterOperator, AdvancedFilterProperty } from "@/core-features/dynamic-filter/filter";
 import { useDialog } from "@/hooks/use-dialog";
 import { SearchField } from "./content-manager-search";

@@ -29,8 +29,8 @@ interface ContextManagerProviderProps {
 }
 export const ContentManagerProvider = ({ entityName, children }: PropsWithChildren<ContextManagerProviderProps>) => {
 
-    const contentManagerSearch = useContentManagerSearchFromQuery();
     const fullEntity = useFullEntity({ entityName });
+    const contentManagerSearch = useContentManagerSearchFromQuery();
     const contentManagerStore = useContentManagerStore({ entityName: entityName, fullEntity: fullEntity, searchState: contentManagerSearch.state, });
 
     const value = useMemo(() => ({

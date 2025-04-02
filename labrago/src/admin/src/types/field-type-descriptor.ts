@@ -1,7 +1,7 @@
 import { FC, ReactNode } from "react";
 
-export type FieldScalarTypes = 'ID' | 'ShortText' | 'LongText' | 'Email' | 'RichText' | 'Integer' | 'Decimal' | 'Float' | 'DateTime' | 'Date' | 'Time' | 'media' | 'Boolean' | 'Json' | 'Enum' | 'SingleChoice' | 'MultipleChoice';
-export type EdgeRelationTypes = 'Relation';
+export type FieldScalarTypes = 'ID' | 'ShortText' | 'LongText' | 'Email' | 'RichText' | 'Password' | 'Integer' | 'Decimal' | 'Float' | 'DateTime' | 'Date' | 'Time' | 'media' | 'Boolean' | 'Json' | 'Enum' | 'SingleChoice' | 'MultipleChoice';
+export type EdgeRelationTypes = 'RelationOne' | 'RelationMany';
 export type EntityChildTypes = FieldScalarTypes | EdgeRelationTypes;
 
 

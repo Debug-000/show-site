@@ -15,6 +15,7 @@ export const WithEntityDataDeleteMutation = (Component: ComponentType<ShowGraphQ
                 title="Delete Entry"
                 query={query.query}
                 variables={query.variables}
+                context={null}
             />
         );
     };

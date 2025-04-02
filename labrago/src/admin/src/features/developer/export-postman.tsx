@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardContent, CardHeader, Chip as MuiChip, Divider, Stack, styled, Chip, Typography } from '@mui/material';
 import { useCallback, useMemo } from 'react';
 import { useFullEntities } from '@/hooks/use-entities';
-import { GRAPHQL_API_URL } from '@/config/CONST';
+import { GRAPHQL_ENTITY_API_URL, GRAPHQL_QUERY_API_URL } from '@/config/CONST';
 import { PostmanCollectionBuilder, PostmanDirectory, PostmanItem } from '@/lib/postman/postman-collection-builder';
 import { getEntityDataQuery } from './use-entity-data';
 import { getEntityDataDeleteMutationQuery } from './use-entity-data-delete-mutation';
@@ -23,10 +23,10 @@ export const ExportPostman = () => {
         const entities = Object.values(fullEntities.entities);
 
         const collection = new PostmanCollectionBuilder()
-            .addName('goLabra Admin GraphQL')
+            .addName('labraGO Admin GraphQL')
             .addItem(new PostmanItem()
                 .addName('Entities Schema')
-                .addUrl(GRAPHQL_API_URL!)
+                .addUrl(GRAPHQL_ENTITY_API_URL!)
                 .addQueryVariables({
                     query: entitiesSchemaQuery,
                     variables: {}
@@ -37,7 +37,7 @@ export const ExportPostman = () => {
                     .addName(entity.caption!)
                     .addItem(new PostmanItem()
                         .addName(`${entity.caption} Schema`)
-                        .addUrl(GRAPHQL_API_URL!)
+                        .addUrl(GRAPHQL_ENTITY_API_URL!)
                         .addQueryVariables({
                             query: entitySchemaQuery,
                             variables: {
@@ -47,22 +47,22 @@ export const ExportPostman = () => {
                     )
                     .addItem(new PostmanItem()
                         .addName('GET')
-                        .addUrl(GRAPHQL_API_URL!)
+                        .addUrl(GRAPHQL_QUERY_API_URL!)
                         .addQueryVariables(getEntityDataQuery(entity))
                     )
                     .addItem(new PostmanItem()
                         .addName('CREATE')
-                        .addUrl(GRAPHQL_API_URL!)
+                        .addUrl(GRAPHQL_QUERY_API_URL!)
                         .addQueryVariables(getEntityDataNewMutationQuery(entity.name))
                     )
                     .addItem(new PostmanItem()
                         .addName('UPDATE')
-                        .addUrl(GRAPHQL_API_URL!)
+                        .addUrl(GRAPHQL_QUERY_API_URL!)
                         .addQueryVariables(getEntityDataUpdateMutationQuery(entity.name))
                     )
                     .addItem(new PostmanItem()
                         .addName('DELETE')
-                        .addUrl(GRAPHQL_API_URL!)
+                        .addUrl(GRAPHQL_QUERY_API_URL!)
                         .addQueryVariables(getEntityDataDeleteMutationQuery(entity.name))
                     )
                 )

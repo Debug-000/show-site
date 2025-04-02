@@ -53,6 +53,8 @@ const (
 	RepositoryContextValue       ContextKey = "repository"
 	ServiceContextValue          ContextKey = "service"
 	CentrifugeClientContextValue ContextKey = "centrifugeClient"
+	UserContextValue             ContextKey = "user"
+	RoleContextValue             ContextKey = "role"
 
 	Local Environment = "local"
 	Dev   Environment = "dev"

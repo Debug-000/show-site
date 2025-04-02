@@ -1,48 +1,76 @@
-import { ReactNode, useMemo } from "react";
+import { PropsWithChildren, ReactNode, useMemo, useState } from "react";
 import { useMyDialogContext } from "./use-my-dialog-context";
-import { Box, DialogTitle, Divider, IconButton, Stack } from "@mui/material";
+import { Box, ClickAwayListener, DialogTitle, Divider, IconButton, Stack, Tooltip } from "@mui/material";
 import CancelIcon from '@mui/icons-material/Cancel';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
-export const useDynamicDialogHeader = () => {
+interface DynamicDialogHeaderProps {
+    whatsThis?: string;
+}
+export const DynamicDialogHeader = (props: PropsWithChildren<DynamicDialogHeaderProps>) => {
 
+    const [whatsThisOpen, setWhatsThisOpen] = useState(false);
     const myDialogContext = useMyDialogContext();
 
-    const headerComponenet = useMemo(() => {
-        const header = ({ children }: { children?: ReactNode }) => {
-            return (
-                <>
-                    <DialogTitle
-                        m={0}
-                        p={0}>
+    return (
+        <>
+            <DialogTitle
+                m={0}
+                p={0}>
 
-                        <Stack
-                            direction="row"
-                            justifyContent="space-between"
-                            alignItems="center">
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center">
 
-                            <Box>
-                                {children}
-                            </Box>
+                    <Box>
+                        {props.children}
+                    </Box>
 
-                            <IconButton
-                                aria-label="close"
-                                onClick={() => myDialogContext.close()}
-                                sx={{
-                                    padding: 0
+                    <Stack direction="row" gap={2} alignItems="center">
+
+                        {props.whatsThis && (<ClickAwayListener onClickAway={() => setWhatsThisOpen(false)}>
+
+                            <Tooltip
+                                onClose={() => setWhatsThisOpen(false)}
+                                open={whatsThisOpen}
+                                disableFocusListener
+                                disableHoverListener
+                                disableTouchListener
+                                title={props.whatsThis}
+                                slotProps={{
+                                    popper: {
+                                        disablePortal: true,
+                                    },
                                 }}
                             >
-                                <CancelIcon />
-                            </IconButton>
+                                <IconButton
+                                    aria-label="close"
+                                    onClick={() => setWhatsThisOpen(true)}
+                                    color="secondary"
+                                    sx={{
+                                        padding: 0
+                                    }}
+                                >
+                                    <HelpOutlineIcon />
+                                </IconButton>
+                            </Tooltip>
 
-                        </Stack>
-                    </DialogTitle>
-                    <Divider />
-                </>
-            )
-        }
+                        </ClickAwayListener>)}
 
-        return header;
-    }, [myDialogContext.close]);
-
-    return headerComponenet;
+                        <IconButton
+                            aria-label="close"
+                            onClick={() => myDialogContext.close()}
+                            sx={{
+                                padding: 0
+                            }}
+                        >
+                            <CancelIcon />
+                        </IconButton>
+                    </Stack>
+                </Stack>
+            </DialogTitle>
+            <Divider />
+        </>
+    )
 }

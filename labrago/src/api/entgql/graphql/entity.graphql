@@ -1,16 +1,30 @@
-extend type Query {
+enum AppStatus {
+    UP
+    GENERATING
+    REVERTING
+    RESTARTING
+    FATAL
+}
+
+type Subscription {
+    appStatus: AppStatus!
+    entities: [Entity!]
+}
+
+type Query {
     entities: [Entity!]
     entity(where: EntityWhereUniqueInput): Entity 
     fields: [Field!]
 }
 
-extend type Mutation {
+type Mutation {
     createEntity(data: CreateEntityInput!): Entity!
     updateEntity(where: EntityWhereUniqueInput!, data: UpdateEntityInput!): Entity!
     deleteEntity(where: EntityWhereUniqueInput!): Entity!
 }
 
 type Entity  {
+    df: String!
     name: String!
     pluralName: String!
     caption: String!

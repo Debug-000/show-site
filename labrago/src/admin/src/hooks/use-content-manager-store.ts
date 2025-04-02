@@ -23,7 +23,9 @@ export const useContentManagerStore = (params: UseContentManagerStoreParams): Us
         setDataLoading(true);
         contentManagerStoreRequest.fetchData({
             fields: fullEntity?.fields ?? [],
-            edges: fullEntity?.edges ?? [],
+            edges: fullEntity?.edges.filter(i => i.relationType !== 'ManyToMany')
+                                    .filter(i => i.relationType !== 'ManyToOne')
+                                    .filter(i => i.relationType !== 'Many') ?? [],
             searchState: searchState!
         })
             ?.then((response: any) => {

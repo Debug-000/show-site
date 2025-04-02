@@ -7,11 +7,12 @@ import { FormField, FormOpenMode } from "@/core-features/dynamic-form/form-field
 import { useDynamicForm } from "@/core-features/dynamic-form/use-dynamic-form";
 import { dynamicLayoutItem } from "@/core-features/dynamic-layout/src/dynamic-layout";
 import { paths } from "@/lib/paths";
+import { Copywrite } from "@/shared/components/copywrite";
 import { Alert, Box, Button, Stack, TextField, Typography } from "@mui/material";
 import NextLink from 'next/link';
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useCallback } from "react";
-
+import { PRODUCT_NAME } from '@/config/CONST';
 
 
 const formItems: dynamicLayoutItem<FormField> = {
@@ -25,36 +26,38 @@ const formItems: dynamicLayoutItem<FormField> = {
             label: 'Email address',
             required: true,
         }
+    }, {
+        data: {
+            type: 'Password',
+            name: 'password',
+            label: 'Password',
+            required: true,
+        }
     }]
 };
 
-const defaultValue = {
-    email: 'abc@labrago.eu',
-    password: '1234'
-}
-
 export default function AuthPage() {
 
-    const auth = useAuth() as AuthContextType;
+    const auth = useAuth<AuthContextType>();
     const router = useRouter();
     const searchParams = useSearchParams();
     const returnTo = searchParams.get('returnTo') || undefined;
 
-    const dynamicForm = useDynamicForm({ initialOpenMode: FormOpenMode.New, initialLayout: formItems, defaultValue: defaultValue });
+    const dynamicForm = useDynamicForm({ initialOpenMode: FormOpenMode.New, initialLayout: formItems});
 
     const onSubmit = useCallback(async (data: any) => {
-        await auth.signIn(data.email);
+        await auth.signIn(data);
         router.push(returnTo || paths.contentManager.index);
     }, [auth.signIn]);
 
     return (<>
 
-        <Box  sx={{ pt: 7, pb: 14  }}>
+        <Box sx={{ pt: 7, pb: 14 }}>
 
-        <Typography textAlign="center" fontWeight={100} fontSize={48} fontFamily="Roboto"  sx={{ mb: 7  }}>
-            Labra·GO
-        </Typography>
-        
+            <Typography textAlign="center" fontWeight={100} fontSize={48} fontFamily="Roboto" sx={{ mb: 7 }}>
+                {PRODUCT_NAME}
+            </Typography>
+
             <form onSubmit={dynamicForm.handleSubmit(onSubmit)} >
 
                 <Stack
@@ -101,14 +104,10 @@ export default function AuthPage() {
                         Forgot password
                     </Button> */}
                 </Box>
-                <Alert
-                    // @ts-ignore
-                    color="primary"
-                    severity="info"
-                    sx={{ mt: 3 }}
-                >
-                    You can use <strong>abc@labrago.eu</strong>
-                </Alert>
+
+                <Box textAlign="center" sx={{ mt: 3 }}>
+                    <Copywrite />
+                </Box>
 
 
             </form>

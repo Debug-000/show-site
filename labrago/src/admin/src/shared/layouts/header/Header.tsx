@@ -9,6 +9,7 @@ import { Topnav } from './Topnav/top-nav';
 import { NavUser } from './User/user';
 import { SkipLinks } from '@/shared/layouts/header/skip-links/src/skip-links';
 import { Logo } from '@/shared/components/logo';
+import { LogoDog } from '@/shared/components/logo.dog';
 
 const TOP_NAV_HEIGHT: number = 64;
 
@@ -24,6 +25,7 @@ export const Header = (props: HeaderProps) => {
 
     const mdDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
 
+
     return (
         <>
             <AppBar position="sticky" sx={{
@@ -34,7 +36,7 @@ export const Header = (props: HeaderProps) => {
                     sx={{
                         height: TOP_NAV_HEIGHT
                     }}>
-                    <Stack direction="row" sx={{ width: 240 }}>
+                    <Stack direction="row" sx={{ width: {md: '240px', lg: '240px', xl: '240px'} }}>
                         <Box px={3}>
                             <Logo />
                         </Box>

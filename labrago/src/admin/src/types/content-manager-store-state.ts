@@ -1,4 +1,4 @@
-import { Edge, Field } from "@/lib/apollo/graphql";
+import { Edge, Field } from "@/lib/apollo/graphql.entities";
 
 
 export interface ContentManagerStoreState {

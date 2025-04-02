@@ -1,14 +1,16 @@
 import { SvgIcon } from "@mui/material";
-import EditIcon from "@/icons/iconly/bulk/edit";
-import CategoryIcon from "@/icons/iconly/bulk/category";
+import EditIcon from "@/assets/icons/iconly/bulk/edit";
+import CategoryIcon from "@/assets/icons/iconly/bulk/category";
 
 export const paths = {
     index: '/',
     auth: {
         jwt: {
             login: '/auth/jwt/login',
-            register: '/auth/jwt/register'
+            //register: '/auth/jwt/register'
         },
+        signup: '/auth/superuser/signup',
+        changeRole: '/auth/change-role',
         // firebase: {
         //   login: '/auth/firebase/login',
         //   register: '/auth/firebase/register'

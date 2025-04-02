@@ -3,8 +3,7 @@ import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo } from
 import { DynamicLayoutFormFields } from "../../core-features/dynamic-form/dynamic-layout-form";
 import { Button, DialogContent, Stack, Typography } from "@mui/material";
 import { ChainDialogContentRef } from "@/core-features/dynamic-dialog/src/dynamic-dialog-types";
-import { useGetEntityFirstLevelSchemaQuery } from "@/lib/apollo/graphql";
-import { useEntities } from "@/hooks/use-entities";
+import { GetEntityFirstLevelSchema, useEntities, useFullEntity } from "@/hooks/use-entities";
 import { useContentManagerFormSchema } from "./use-content-manager-form-schema";
 import { Id } from "@/shared/components/id";
 import { HistoryEvent, HistoryTimeLine } from "@/shared/components/history-timeline";
@@ -13,8 +12,10 @@ import { FormOpenMode } from "@/core-features/dynamic-form/form-field";
 import { localeConfig } from "@/config/locale-config";
 import dayjs from 'dayjs';
 import { useMyDialogContext } from "@/core-features/dynamic-dialog/src/use-my-dialog-context";
-import { useDynamicDialogHeader } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-header";
-import { useDynamicDialogFooter } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-footer";
+import { DynamicDialogHeader } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-header";
+import { DynamicDialogFooter } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-footer";
+import { useQuery } from "@apollo/client";
+import { ENTITY_CONTEXT } from "@/lib/apollo/apolloWrapper";
 
 interface ContentManagerEntryDialogContentProps {
     entityName: string,
@@ -23,23 +24,19 @@ interface ContentManagerEntryDialogContentProps {
 export const ContentManagerEntryDialogContent = forwardRef<ChainDialogContentRef, ContentManagerEntryDialogContentProps>((props, ref) => {
 
     const myDialogContext = useMyDialogContext();
-    const Header = useDynamicDialogHeader();
-    const Footer = useDynamicDialogFooter();
-    const { data: entitySchema, refetch } = useGetEntityFirstLevelSchemaQuery({ variables: { name: props.entityName } });
-    const schema = useContentManagerFormSchema(entitySchema);
-    const graphEntities = useEntities();
-    const entity = useMemo(() => graphEntities?.entities.find(i => i.name == props.entityName), [graphEntities?.entities, props.entityName]);
+    const fullEntity = useFullEntity({ entityName:props.entityName});
+    const schema = useContentManagerFormSchema(fullEntity);
 
     const id = useMemo(() => {
         return props.defaultValue?.id;
     }, [props.defaultValue]);
 
     const displayValue = useMemo(() => {
-        if (!entitySchema) {
+        if (!fullEntity) {
             return null;
         }
 
-        const displayFieldProperty = entitySchema.entity?.displayField?.name;
+        const displayFieldProperty = fullEntity?.displayField?.name;
         if (!displayFieldProperty) {
             return null;
         }
@@ -49,7 +46,7 @@ export const ContentManagerEntryDialogContent = forwardRef<ChainDialogContentRef
         }
 
         return props.defaultValue?.[displayFieldProperty];
-    }, [entitySchema, props.defaultValue]);
+    }, [fullEntity, props.defaultValue]);
 
     const upperValueAsFieldValues = useMemo(() => {
         return Object.fromEntries(
@@ -77,12 +74,12 @@ export const ContentManagerEntryDialogContent = forwardRef<ChainDialogContentRef
     }, [myDialogContext.closeWithResults]);
 
     const header = useMemo(() => {
-        const fEntityName = entity?.caption ?? props.entityName;
+        const fEntityName = fullEntity?.caption ?? props.entityName;
         if (!displayValue) {
             return fEntityName;
         }
         return `${fEntityName}: ${displayValue}`;
-    }, [displayValue, entity?.caption, props.entityName]);
+    }, [displayValue, fullEntity?.caption, props.entityName]);
 
     useImperativeHandle(ref, () => ({
         enterPressed: () => {
@@ -90,17 +87,17 @@ export const ContentManagerEntryDialogContent = forwardRef<ChainDialogContentRef
         }
     }));
 
-    useEffect(() => {
-        refetch({
-            name: props.entityName
-        });
-    }, [props.entityName]);
+    // useEffect(() => {
+    //     refetch({
+    //         name: props.entityName
+    //     });
+    // }, [props.entityName]);
 
     return (
         <>
-            <Header>
+            <DynamicDialogHeader>
                 {header}
-            </Header>
+            </DynamicDialogHeader>
             <DialogContent>
                 <Stack
                     gap={2}>
@@ -117,7 +114,7 @@ export const ContentManagerEntryDialogContent = forwardRef<ChainDialogContentRef
 
                 </Stack>
             </DialogContent>
-            <Footer>
+            <DynamicDialogFooter>
                 <Stack
                     direction="row"
                     gap={1}>
@@ -127,7 +124,7 @@ export const ContentManagerEntryDialogContent = forwardRef<ChainDialogContentRef
                         onClick={dynamicForm.handleSubmit(onSave)}
                     >Save</Button>
                 </Stack>
-            </Footer>
+            </DynamicDialogFooter>
         </>
     )
 });

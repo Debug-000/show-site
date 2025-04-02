@@ -48,9 +48,9 @@ export default function Blog() {
               <Image
                 src={post.image}
                 alt={post.title}
-                layout="fill"
-                objectFit="cover"
-                className="rounded-t-lg"
+                width={500}
+                height={500}
+                className="rounded-t-lg object-cover w-full h-full"
               />
             </div>
             <div className="p-6">

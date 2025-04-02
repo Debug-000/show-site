@@ -1,5 +1,5 @@
 # Use the official Golang image as the base
-FROM golang:1.22.5-alpine
+FROM golang:1.23.0-alpine
 
 # Install dependencies
 RUN apk add --no-cache git bash openssh-client
@@ -7,19 +7,7 @@ RUN apk add --no-cache git bash openssh-client
 # Set the working directory inside the container
 WORKDIR /app
 
-# Accept build arguments from GitHub Actions and convert them to ENV variables
 ARG GH_PAT
-ARG DB_HOST
-ARG DB_PORT
-ARG DB_USER
-ARG DB_NAME
-ARG DB_PASSWORD
-ARG DB_SSLMODE
-ARG SECRET_KEY
-ARG SERVER_PORT
-ARG ENT_SCHEMA_PATH
-ARG CENTRIFUGO_API_ADDRESS
-ARG CENTRIFUGO_API_KEY
 
 # Authenticate Git with GitHub Token (avoids interactive login)
 RUN git config --global url."https://${GH_PAT}@github.com/".insteadOf "https://github.com/"

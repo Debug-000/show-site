@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardContent, CardHeader, Chip as MuiChip, Divider, Stack, styled, Chip, Typography } from '@mui/material';
 import { useCallback, useMemo } from 'react';
 import { useFullEntities } from '@/hooks/use-entities';
-import { GRAPHQL_API_URL } from '@/config/CONST';
+import { GRAPHQL_ENTITY_API_URL, GRAPHQL_QUERY_API_URL } from '@/config/CONST';
 import { PostmanCollectionBuilder, PostmanDirectory, PostmanItem } from '@/lib/postman/postman-collection-builder';
 import { getEntityDataQuery } from './use-entity-data';
 import { getEntityDataDeleteMutationQuery } from './use-entity-data-delete-mutation';
@@ -22,10 +22,10 @@ export const ExportBruno = () => {
         const entities = Object.values(fullEntities.entities);
 
         const collection = new BrunoCollectionBuilder()
-            .addName('goLabra Admin GraphQL')
+            .addName('labraGO Admin GraphQL')
             .addItem(new BrunoItem()
                 .addName('Entities Schema')
-                .addUrl(GRAPHQL_API_URL!)
+                .addUrl(GRAPHQL_ENTITY_API_URL!)
                 .addQueryVariables({
                     query: entitiesSchemaQuery,
                     variables: {}
@@ -36,7 +36,7 @@ export const ExportBruno = () => {
                     .addName(entity.caption!)
                     .addItem(new BrunoItem()
                         .addName(`${entity.caption} Schema`)
-                        .addUrl(GRAPHQL_API_URL!)
+                        .addUrl(GRAPHQL_ENTITY_API_URL!)
                         .addQueryVariables({
                             query: entitySchemaQuery,
                             variables: {
@@ -46,22 +46,22 @@ export const ExportBruno = () => {
                     )
                     .addItem(new BrunoItem()
                         .addName('GET')
-                        .addUrl(GRAPHQL_API_URL!)
+                        .addUrl(GRAPHQL_QUERY_API_URL!)
                         .addQueryVariables(getEntityDataQuery(entity))
                     )
                     .addItem(new BrunoItem()
                         .addName('CREATE')
-                        .addUrl(GRAPHQL_API_URL!)
+                        .addUrl(GRAPHQL_QUERY_API_URL!)
                         .addQueryVariables(getEntityDataNewMutationQuery(entity.name))
                     )
                     .addItem(new BrunoItem()
                         .addName('UPDATE')
-                        .addUrl(GRAPHQL_API_URL!)
+                        .addUrl(GRAPHQL_QUERY_API_URL!)
                         .addQueryVariables(getEntityDataUpdateMutationQuery(entity.name))
                     )
                     .addItem(new BrunoItem()
                         .addName('DELETE')
-                        .addUrl(GRAPHQL_API_URL!)
+                        .addUrl(GRAPHQL_QUERY_API_URL!)
                         .addQueryVariables(getEntityDataDeleteMutationQuery(entity.name))
                     )
                 )

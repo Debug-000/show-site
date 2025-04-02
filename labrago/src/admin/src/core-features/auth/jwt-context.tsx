@@ -6,16 +6,26 @@ import PropTypes from 'prop-types';
 //import { authApi } from '../../api/auth';
 import type { User } from '../../types/user';
 import { Issuer } from '@/lib/utils/auth';
+import { changeRoleQuery, signInQuery, superUserSignUpQuery } from '@/lib/apollo/queries/auth';
+import { useMutation, useQuery, useLazyQuery, gql } from '@apollo/client';
+import { isJwtValid, getJwtSub } from '@/lib/utils/jwt';
 
-const user: User = {
-    id: '1',
-    name: 'abc',
-    email: 'abc@golabra.com',
-    avatar: '/assets/avatars/avatar-chen-simmons.jpg',
-    createdAt: '2023-01-01T00:00:00.000Z',
-    updatedAt: '2023-01-01T00:00:00.000Z'
-}
 
+export const getMeDocument = gql`query getMe($where:UserWhereInput!) {
+    users(where:$where) {
+          id
+          name
+          firstName
+          lastName
+          email
+          roles {
+              id
+              name
+          }
+      }
+  }`
+
+  
 const STORAGE_KEY = 'accessToken';
 
 interface State {
@@ -114,7 +124,8 @@ const reducer = (state: State, action: Action): State => (
 export interface AuthContextType extends State {
     issuer: Issuer.JWT;
     signIn: (email: string) => Promise<void>;
-    signUp: (email: string, name: string, password: string) => Promise<void>;
+    changeRole: (role: string) => Promise<void>;
+    signUp: (data: any) => Promise<void>;
     signOut: () => Promise<void>;
 }
 
@@ -122,6 +133,7 @@ export const AuthContext = createContext<AuthContextType>({
     ...initialState,
     issuer: Issuer.JWT,
     signIn: () => Promise.resolve(),
+    changeRole: (role: string) => Promise.resolve(),
     signUp: () => Promise.resolve(),
     signOut: () => Promise.resolve()
 });
@@ -134,19 +146,24 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
     const { children } = props;
     const [state, dispatch] = useReducer(reducer, initialState);
 
+    const [signUpRequest] = useMutation<any>(superUserSignUpQuery);
+    const [signInRequest] = useMutation<any>(signInQuery);
+    const [changeRoleRequest] = useMutation<any>(changeRoleQuery);
+    const [me] = useLazyQuery<any>(getMeDocument);
+
     const initialize = useCallback(
         async (): Promise<void> => {
             try {
                 const accessToken = globalThis.localStorage.getItem(STORAGE_KEY);
 
-                if (accessToken) {
-                    // const user = await authApi.me({ accessToken });
+                if (isJwtValid(accessToken)) {
+                    const user = await me({ variables: { where: { email: getJwtSub(accessToken) } } });
 
                     dispatch({
                         type: ActionType.INITIALIZE,
                         payload: {
                             isAuthenticated: true,
-                            user
+                            user: user.data?.users[0]
                         }
                     });
                 } else {
@@ -179,31 +196,58 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
         []);
 
     const signIn = useCallback(
-        async (email: string): Promise<void> => {
-            // const { accessToken } = await authApi.signIn({ email, password });
+        async (data: any): Promise<void> => {
+            const result = await signInRequest({
+                variables: {
+                    input: {
+                        ...data,
+                        roles: ['Admin'],
+                        defaultRole: 'Admin'
+                    }
+                }
+            });
 
-            if (email != 'abc@labrago.eu') {
-                return;
-            }
-
-            const accessToken = 'ACCESS_TOKEN';
-
-            // const user = await authApi.me({ accessToken });
+            const accessToken = result.data.signIn.token;
+            const user = await me({ variables: { where: { email: getJwtSub(accessToken) } } });
 
             localStorage.setItem(STORAGE_KEY, accessToken);
 
             dispatch({
                 type: ActionType.SIGN_IN,
                 payload: {
-                    user
+                    user: user.data?.users[0]
                 }
             });
-        },
-        [dispatch]
-    );
+        }, [dispatch]);
+
+    const changeRole = useCallback(
+        async (role: string): Promise<void> => {
+
+            const result = await changeRoleRequest({
+                variables: {
+                    input: {
+                        role: role,
+                    }
+                }
+            });
+
+            const accessToken = result.data.changeRole.token;
+            localStorage.setItem(STORAGE_KEY, accessToken);
+        }, []);
 
     const signUp = useCallback(
-        async (email: string, name: string, password: string): Promise<void> => {
+        async (data: any): Promise<void> => {
+
+            await signUpRequest({
+                variables: {
+                    input: {
+                        ...data,
+                        roles: ['Admin'],
+                        defaultRole: 'Admin'
+                    }
+                }
+            });
+
             // const { accessToken } = await authApi.signUp({ email, name, password });
             // const user = await authApi.me({ accessToken });
 
@@ -223,9 +267,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
         async (): Promise<void> => {
             localStorage.removeItem(STORAGE_KEY);
             dispatch({ type: ActionType.SIGN_OUT });
-        },
-        [dispatch]
-    );
+        }, [dispatch]);
 
     return (
         <AuthContext.Provider
@@ -234,17 +276,14 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
                 issuer: Issuer.JWT,
                 signIn,
                 signUp,
-                signOut
+                signOut,
+                changeRole
             }}
         >
-            { state.isInitialized && children }
-            
+            {state.isInitialized && children}
+
         </AuthContext.Provider>
     );
-};
-
-AuthProvider.propTypes = {
-    children: PropTypes.node.isRequired
 };
 
 export const AuthConsumer = AuthContext.Consumer;

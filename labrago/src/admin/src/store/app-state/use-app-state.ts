@@ -1,7 +1,8 @@
 import { NameCaptionEntity } from "@/types/entity";
 import { makeVar, useReactiveVar } from "@apollo/client";
 import { useCallback, useMemo } from "react";
-import { AppStatusEvent, appStatusVar, entitiesInCodeGenerationVar } from ".";
+import { appStatusVar, entitiesInCodeGenerationVar } from ".";
+import { AppStatus } from "@/lib/apollo/graphql.entities";
 
 
 export const useAppStatus = () => {
@@ -9,7 +10,7 @@ export const useAppStatus = () => {
     const entitiesInCodeGeneration = useReactiveVar(entitiesInCodeGenerationVar);
 
     const isEntityInCodeGeneration = useCallback((entityName: string) => {
-        if (applicationStatus != AppStatusEvent.CODE_GENERATION_STARTED) {
+        if (applicationStatus != AppStatus.Generating) {
             return false;
         }
 
@@ -17,7 +18,7 @@ export const useAppStatus = () => {
     }, [entitiesInCodeGeneration, applicationStatus]);
 
     const isCodeGenerating = useMemo(() => {
-        return applicationStatus === AppStatusEvent.CODE_GENERATION_STARTED;
+        return applicationStatus === AppStatus.Generating;
     }, [applicationStatus]);
 
     const isEntityFullyAvailable = useCallback((entityName: string) => {
@@ -26,11 +27,7 @@ export const useAppStatus = () => {
             return false;
         }
 
-        if(applicationStatus == AppStatusEvent.CODE_GENERATION_FAILED ||
-            applicationStatus == AppStatusEvent.CODE_GENERATION_COMPLETED ||
-            applicationStatus == AppStatusEvent.CODE_GENERATION_REVERTED ||
-            applicationStatus == AppStatusEvent.SHUTDOWN
-        ){
+        if(applicationStatus !== AppStatus.Up){
             return false;
         }
 

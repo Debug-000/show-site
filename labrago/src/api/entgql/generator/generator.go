@@ -2,7 +2,6 @@ package generator
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -11,13 +10,10 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/GoLabra/labrago/src/api/centrifuge"
-	"github.com/GoLabra/labrago/src/api/constants"
 	"github.com/GoLabra/labrago/src/api/entgql/entity"
 	"github.com/GoLabra/labrago/src/api/entgql/templates"
 	"github.com/GoLabra/labrago/src/api/strcase"
-
-	"github.com/centrifugal/gocent/v3"
+	"github.com/GoLabra/labrago/src/api/subscription"
 )
 
 type FileSystem interface {
@@ -27,9 +23,13 @@ type FileSystem interface {
 	Exit(code int)
 }
 
-type SchemaManager struct {
-	fs FileSystem
+type SubscriptionClient interface {
+	PublishAppStatusMessage(appStatus subscription.AppStatus)
+}
 
+type SchemaManager struct {
+	fs                 FileSystem
+	subscriptionClient SubscriptionClient
 	// TODO @David populate these values from config, maybe rename?
 	schemaDateImportPath          string
 	generateLocation              string
@@ -40,9 +40,10 @@ type SchemaManager struct {
 	adminSchemaBackupRelativePath string
 }
 
-func NewSchemaManager(fs FileSystem, schemaPath string, generateLocation string) SchemaManager {
+func NewSchemaManager(fs FileSystem, schemaPath string, generateLocation string, subscriptionClient SubscriptionClient) SchemaManager {
 	return SchemaManager{
 		fs:                            fs,
+		subscriptionClient:            subscriptionClient,
 		schemaDateImportPath:          "github.com/GoLabra/labrago/src/api/entgql/date",
 		generateLocation:              generateLocation,
 		entschemaTemplateRelativePath: "entschema/*",
@@ -107,33 +108,31 @@ func (sm SchemaManager) WriteEntityToSchema(entityTemplateData EntityTemplateDat
 }
 
 func (sm SchemaManager) Generate(ctx context.Context, entities []entity.Entity) error {
-	centrifugeClient, ok := ctx.Value(constants.CentrifugeClientContextValue).(*gocent.Client)
-	if !ok {
-		return errors.New(centrifuge.ErrCentrifugeClientNotSetInContext)
-	}
+	// centrifugeClient, ok := ctx.Value(constants.CentrifugeClientContextValue).(*gocent.Client)
+	// if !ok {
+	// 	return errors.New(centrifuge.ErrCentrifugeClientNotSetInContext)
+	// }
 
-	centrifuge.PublishAppStatusMessage(ctx, centrifugeClient, centrifuge.AppStatusGenerationStarted, entities)
+	sm.subscriptionClient.PublishAppStatusMessage(subscription.AppStatusGenerating)
 
 	go func() {
-		ctx := context.Background()
+		// ctx := context.Background()
 		err := sm.RunGenerateCommand()
 
 		if err != nil {
+			sm.subscriptionClient.PublishAppStatusMessage(subscription.AppStatusReverting)
+
 			sm.RevertSchema()
 
 			err = sm.RunGenerateCommand()
 			if err != nil {
-				centrifuge.PublishAppStatusMessage(ctx, centrifugeClient, centrifuge.AppStatusGenerationFailed, nil)
+				sm.subscriptionClient.PublishAppStatusMessage(subscription.AppStatusFatal)
 				panic("FATAL ERROR app is in an unrecoverable state") // TODO @David log fatal
 			}
-
-			centrifuge.PublishAppStatusMessage(ctx, centrifugeClient, centrifuge.AppStatusGenerationReverted, nil)
-		} else {
-			centrifuge.PublishAppStatusMessage(ctx, centrifugeClient, centrifuge.AppStatusGenerationCompleted, entities)
 		}
 
 		// TODO @David fix ugly hack
-		centrifuge.PublishAppStatusMessage(ctx, centrifugeClient, centrifuge.AppStatusShutdown, entities)
+		sm.subscriptionClient.PublishAppStatusMessage(subscription.AppStatusRestarting)
 		time.Sleep(2 * time.Second)
 		sm.fs.Exit(1)
 	}()

@@ -10,6 +10,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import NextLink from 'next/link';
 import AvatarUserDetails from '@/shared/components/avatar-user-details';
 import NightlightIcon from '@mui/icons-material/Nightlight';
+import BadgeIcon from '@mui/icons-material/Badge';
 import { AuthContextType } from '@/core-features/auth/jwt-context';
 import { useAuth } from '@/core-features/auth/use-auth';
 import { useCallback } from 'react';
@@ -49,7 +50,7 @@ export const NavUser = () => {
 
                             <AvatarUserDetails
                                 size="small"
-                                name="Super User"
+                                name={auth.user?.firstName}
                             />
                             <SvgIcon
                                 color="action"
@@ -77,7 +78,18 @@ export const NavUser = () => {
                     <MenuItemToggle value={mode === 'dark'} valueChange={(value) => setMode(value === true ? 'dark' : 'light')} />
                 </MenuItem>
 
-                <MenuItem component={NextLink} href="/developer">
+                <Divider />
+                
+                <MenuItem component={NextLink} href={paths.auth.changeRole}>
+                    <ListItemIcon>
+                        <BadgeIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Change Role" />
+                </MenuItem>
+                
+                <Divider />
+
+                <MenuItem component={NextLink} href={paths.developer.index}>
                     <ListItemIcon>
                         <TerminalIcon fontSize="small" />
                     </ListItemIcon>

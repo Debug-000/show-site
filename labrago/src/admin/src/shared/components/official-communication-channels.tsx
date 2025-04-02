@@ -35,6 +35,7 @@ export const OfficialCommunicationChannels = () => {
                                 href="#"
                                 target="_blank"
                                 variant="inherit"
+                                color="primary.light"
                             >
                                 docs
                             </Link>
@@ -49,6 +50,7 @@ export const OfficialCommunicationChannels = () => {
                                 href="#"
                                 target="_blank"
                                 variant="inherit"
+                                color="primary.light"
                             >
                                 code examples
                             </Link>
@@ -63,21 +65,22 @@ export const OfficialCommunicationChannels = () => {
             <CardContent>
 
                 <Stack direction="row" flexWrap="wrap" spacing={0} gap={1} my={0}>
-                    <SocialIcon url="https://github.com/GoLabra/labrago" target="_blank" style={{ height: 25, width: 25 }} />
-                    <SocialIcon url="https://linkedin.com/in/couetilc" target="_blank" style={{ height: 25, width: 25 }}/>
-                    <SocialIcon url="https://facebook.com/" target="_blank" style={{ height: 25, width: 25 }}/>
-                    <SocialIcon url="https://bluesky.com/" network="bsky.app" style={{ height: 25, width: 25 }} />
-                    <SocialIcon url="https://x.com/" style={{ height: 25, width: 25 }} />
-                    <SocialIcon url="https://threads.com/" style={{ height: 25, width: 25 }} />
-                    <SocialIcon url="https://discord.com/" target="_blank" style={{ height: 25, width: 25 }}/>
-                    <SocialIcon url="https://reddit.com/" target="_blank" style={{ height: 25, width: 25 }}/>
-                    <SocialIcon url="https://youtube.com/" target="_blank" style={{ height: 25, width: 25 }}/>
-                    <SocialIcon url="https://tiktok.com/" target="_blank" style={{ height: 25, width: 25 }}/>
+                    <SocialIcon url="https://github.com/GoLabra/labrago" target="_blank" style={{ height: 25, width: 25 }} rel="noopener"/>
+                    <SocialIcon url="https://linkedin.com/in/couetilc" target="_blank" style={{ height: 25, width: 25 }} rel="noopener"/>
+                    <SocialIcon url="https://facebook.com/" target="_blank" style={{ height: 25, width: 25 }} rel="noopener"/>
+                    <SocialIcon url="https://bluesky.com/" network="bsky.app" style={{ height: 25, width: 25 }} rel="noopener"/>
+                    <SocialIcon url="https://x.com/" style={{ height: 25, width: 25 }} rel="noopener"/>
+                    <SocialIcon url="https://threads.com/" style={{ height: 25, width: 25 }} rel="noopener"/>
+                    <SocialIcon url="https://discord.com/" target="_blank" style={{ height: 25, width: 25 }} rel="noopener"/>
+                    <SocialIcon url="https://reddit.com/" target="_blank" style={{ height: 25, width: 25 }} rel="noopener"/>
+                    <SocialIcon url="https://youtube.com/" target="_blank" style={{ height: 25, width: 25 }} rel="noopener"/>
+                    <SocialIcon url="https://tiktok.com/" target="_blank" style={{ height: 25, width: 25 }} rel="noopener"/>
 
                 </Stack>
             </CardContent>
 
             <Divider />
+
 
         </Card>
     )

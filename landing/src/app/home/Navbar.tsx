@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Navbar() {
   return (
     <div>
@@ -7,63 +9,63 @@ export default function Navbar() {
         </div>
         <div>
           <ul className="flex justify-center items-center gap-2 font-normal tracking-wider">
-            <a
-              href="#"
+            <Link
+              href="/"
               className="border-b-[2px] border-transparent hover:border-blue-700 py-2 px-2 hover:text-blue-700"
             >
               Home
-            </a>
-            <a
+            </Link>
+            <Link
               href="docs"
               className="border-b-[2px] border-transparent hover:border-blue-700 py-2 px-2 hover:text-blue-700"
             >
               Docs
-            </a>
-            <a
+            </Link>
+            <Link
               href="features"
               className="border-b-[2px] border-transparent hover:border-blue-700 py-2 px-2 hover:text-blue-700"
             >
               Features
-            </a>
-            <a
+            </Link>
+            <Link
               href="community"
               className="border-b-[2px] border-transparent hover:border-blue-700 py-2 px-2 hover:text-blue-700"
             >
               Community
-            </a>
-            <a
+            </Link>
+            <Link
               href="blog"
               className="border-b-[2px] border-transparent hover:border-blue-700 py-2 px-2 hover:text-blue-700"
             >
               Blog
-            </a>
-            <a
+            </Link>
+            <Link
               href="about"
               className="border-b-[2px] border-transparent hover:border-blue-700 py-2 px-2 hover:text-blue-700"
             >
               About
-            </a>
-            <a
+            </Link>
+            <Link
               href="showcase"
               className="border-b-[2px] border-transparent hover:border-blue-700 py-2 px-2 hover:text-blue-700"
             >
               Showcase
-            </a>
-            <a
+            </Link>
+            <Link
               href="contact"
               className="border-b-[2px] border-transparent hover:border-blue-700 py-2 px-2 hover:text-blue-700"
             >
               Contact
-            </a>
+            </Link>
           </ul>
         </div>
         <div className="scaled">
-          <a
+          <Link
             href="docs"
             className="bg-blue-700 text-white px-8 py-4 rounded-3xl scaled"
           >
             Get Started
-          </a>
+          </Link>
         </div>
       </div>
     </div>

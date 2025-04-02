@@ -1,4 +1,4 @@
-import { Button, DialogContent, Typography } from "@mui/material";
+import { Box, Button, DialogContent, Stack, Typography } from "@mui/material";
 import { forwardRef, useCallback, useImperativeHandle, useMemo } from "react";
 import { FormField, FormOpenMode } from "@/core-features/dynamic-form/form-field";
 import { useDynamicForm } from "@/core-features/dynamic-form/use-dynamic-form";
@@ -9,8 +9,10 @@ import { ChangedNameCaptionEntity } from "@/types/entity";
 import { useEntitiesDesignerSystemValidation } from "./use-designer-system-validation";
 import { Id } from "@/shared/components/id";
 import { useMyDialogContext } from "@/core-features/dynamic-dialog/src/use-my-dialog-context";
-import { useDynamicDialogHeader } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-header";
-import { useDynamicDialogFooter } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-footer";
+import Avvvatars from "avvvatars-react";
+import { DynamicDialogHeader } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-header";
+import { DynamicDialogFooter } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-footer";
+
 
 interface EntityTypeNewEntityDialogProps {
     defaultValue: ChangedNameCaptionEntity;
@@ -19,8 +21,6 @@ export const EntityTypeNewEntityDialog = forwardRef<ChainDialogContentRef, Entit
 
     const { defaultValue } = props;
     const myDialogContext = useMyDialogContext();
-    const Header = useDynamicDialogHeader();
-    const Footer = useDynamicDialogFooter();
     const systemValidation = useEntitiesDesignerSystemValidation();
 
     const formItems: dynamicLayoutItem<FormField> = useMemo(() => ({
@@ -77,37 +77,39 @@ export const EntityTypeNewEntityDialog = forwardRef<ChainDialogContentRef, Entit
 
     return (<>
 
-        <Header>
+        <DynamicDialogHeader whatsThis="An entity represents a distinct piece of content or data within the CMS.
+                It can be anything from a blog post, product, user profile, or any other type of data you need to manage.
+                Entities help organize and structure your content efficiently.">
             {myDialogContext.openMode == FormOpenMode.New ? 'New Entity' : 'Edit Entity'}
-        </Header>
+        </DynamicDialogHeader>
 
-        <DialogContent>
+        <DialogContent sx={{ overflow: 'visible' }}>
+
+            <Stack direction="row" justifyContent="center" sx={{
+                width: 'fit-content',
+                margin: 'auto',
+                padding: '5px',
+                border: '2px dashed color-mix(in srgb, var(--mui-palette-background-paper), var(--mui-palette-common-onBackground) 20%)',
+                borderRadius: '100%'
+            }}>
+                <Avvvatars value={dynamicForm.watch('caption') ?? 'Unknown'} style="shape" size={65} />
+            </Stack>
 
             {!!name && <Id id="Name" value={name} rootProps={{
                 marginLeft: 'auto',
             }} />}
 
-            <Typography
-                color="text.secondary"
-                variant="body2"
-                my={2}
-            >
-                An entity represents a distinct piece of content or data within the CMS.
-                It can be anything from a blog post, product, user profile, or any other type of data you need to manage.
-                Entities help organize and structure your content efficiently.
-            </Typography>
-
             <form onSubmit={(e) => e.preventDefault()} >
                 <DynamicLayoutFormFields dynamicForm={dynamicForm} />
             </form>
         </DialogContent>
-        <Footer>
+        <DynamicDialogFooter>
             <Button
                 color="primary"
                 variant="contained"
                 onClick={dynamicForm.handleSubmit(onFinish)}
             >Save</Button>
-        </Footer>
+        </DynamicDialogFooter>
     </>)
 });
 EntityTypeNewEntityDialog.displayName = 'EntityTypeNewEntityDialog';

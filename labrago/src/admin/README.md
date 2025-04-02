@@ -61,14 +61,24 @@ To start the app in production mode:
 This project requires environment variables to be set up for proper functionality. Create a `.env.local` file in the root directory and define your variables there. Example:
 
 ```
-NEXT_PUBLIC_GRAPHQL_API_URL = "https://your-domain.com:4000/query"
-NEXT_PUBLIC_GRAPHQL_PLAYGROUND_URL = "http://your-domain.com:4000/playground"
+NEXT_PUBLIC_BRAND_PRODUCT_NAME = "Labra·GO"
+NEXT_PUBLIC_BRAND_COLOR = "blue"
+
+NEXT_PUBLIC_GRAPHQL_API_URL = "http://your-domain.com:4000"
+NEXT_PUBLIC_GRAPHQL_QUERY_API_URL = "http://your-domain.com:4000/query"
+NEXT_PUBLIC_GRAPHQL_QUERY_SUBSCRIPTION_URL = "ws://your-domain.com:4000/query"
+NEXT_PUBLIC_GRAPHQL_QUERY_PLAYGROUND_URL = "http://your-domain.com:4000/playground"
+NEXT_PUBLIC_GRAPHQL_ENTITY_API_URL = "http://your-domain.com:4000/entity"
+NEXT_PUBLIC_GRAPHQL_ENTITY_SUBSCRIPTION_URL = "ws://your-domain.com:4000/entity"
+NEXT_PUBLIC_GRAPHQL_ENTITY_PLAYGROUND_URL = "http://your-domain.com:4000/eplayground"
+
 NEXT_PUBLIC_CENTRIFUGO_URL = "ws://your-domain.com:8000/connection/websocket"
 ```
 
 Refer to the `.env` file for a complete list of required variables.
 
 Note: Rebuild the application after making changes to environment variables.
+
 
 ## Contributing
 We welcome contributions to this project! To contribute:

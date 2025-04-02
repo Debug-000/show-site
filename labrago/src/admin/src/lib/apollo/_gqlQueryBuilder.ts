@@ -1,5 +1,5 @@
 import * as gqlBuilder from 'gql-query-builder'
-import { Field, Edge } from './graphql';
+import { Field, Edge } from './graphql.entities';
 
 
 function hackyOperationFromEntityName(word: string) {

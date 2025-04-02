@@ -49,9 +49,3 @@ export const WidgetPreviewer: FC<WidgetPreviewerProps> = (props) => {
     </Stack>
   );
 };
-
-WidgetPreviewer.propTypes = {
-  children: PropTypes.node.isRequired,
-  description: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node])
-};

@@ -1,6 +1,6 @@
 import { ContentManagerSearchState } from "@/types/content-manager-search-state";
 import { useCallback, useMemo } from "react";
-import { useQueryState, parseAsInteger, parseAsString, parseAsJson } from 'nuqs';
+import { useQueryState, parseAsInteger, parseAsString, parseAsJson, parseAsBoolean } from 'nuqs';
 import { AdvancedFilter as AdvancedFilters } from "@/core-features/dynamic-filter/filter";
 import { Filter, Order } from "mosaic-data-table";
 import Defaults from "@/config/Defaults.json";

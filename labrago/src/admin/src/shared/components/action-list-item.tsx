@@ -26,6 +26,5 @@ export const ActionListItem: FC<ActionListItemProps> = (props) => {
 };
 
 ActionListItem.propTypes = {
-    icon: PropTypes.node,
     label: PropTypes.string.isRequired
 };

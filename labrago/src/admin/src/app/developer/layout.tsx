@@ -1,6 +1,6 @@
 
 import { Box, Stack } from "@mui/material";
-import { withAuthGuard } from "@/hocs/with-auth-guard";
+import { withAuthGuard } from "@/core-features/auth/hocs/with-auth-guard";
 import DeveloperEntities from "@/features/developer/developer-entities";
 import DevLayout from "@/shared/layouts/devLayout";
 import { CurrentEntityProvider } from "@/hooks/use-current-entity";

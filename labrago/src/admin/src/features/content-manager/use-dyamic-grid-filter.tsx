@@ -1,5 +1,5 @@
 import { containsFoldOperator, lessThanOrEqualDateTimeOperator, lessThanOrEqualNumberOperator } from "@/core-features/dynamic-filter/filter-operators";
-import { Field } from "@/lib/apollo/graphql"
+import { Field } from "@/lib/apollo/graphql.entities"
 import { FormFieldTypes } from "@/types/field-type-descriptor";
 import { ColumnDefFilter } from "mosaic-data-table";
 import { useMemo } from "react";

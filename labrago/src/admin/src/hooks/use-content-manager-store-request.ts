@@ -1,7 +1,7 @@
 import { ContentManagerSearchState } from "@/types/content-manager-search-state";
 import { useCallback, useMemo } from "react";
 import { gql, useApolloClient } from "@apollo/client";
-import { Edge, Field } from "@/lib/apollo/graphql";
+import { Edge, Field } from "@/lib/apollo/graphql.entities";
 import { GqlDataQueryBuilder } from "@/lib/apollo/builders/gqlQueryBuilder";
 import { GqlDataCREATEMutationBuilder, GqlDataDELETEBulkMutationBuilder, GqlDataDELETEMutationBuilder, GqlDataUPDATEMutationBuilder } from "@/lib/apollo/builders/gqlMutationBuilder";
 import { getAdvancedFiltersFromGridFilter } from "@/lib/utils/get-advanced-filters-from-grid-filters";

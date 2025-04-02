@@ -13,7 +13,7 @@ import { designerEdgeMap, designerFieldsMap } from "./designer-field-map";
 import { ChainDialogContentRef } from "@/core-features/dynamic-dialog/src/dynamic-dialog-types";
 import { DesignerEdge, DesignerField } from "@/types/entity";
 import { useMyDialogContext } from "@/core-features/dynamic-dialog/src/use-my-dialog-context";
-import { useDynamicDialogHeader } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-header";
+import { DynamicDialogHeader } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-header";
 
 export const useEntityTypeDesignerEntryDialog = () => {
 
@@ -73,7 +73,6 @@ export const useEntityTypeDesignerEntryDialog = () => {
 export const EntityTypeDesignerEntryDialogContent = forwardRef<ChainDialogContentRef>((props, ref) => {
 
     const myDialogContext = useMyDialogContext();
-    const Header = useDynamicDialogHeader();
     
     useImperativeHandle(ref, () => ({
 
@@ -93,9 +92,9 @@ export const EntityTypeDesignerEntryDialogContent = forwardRef<ChainDialogConten
 
     return (<>
 
-        <Header>
+        <DynamicDialogHeader>
             Select Field Type
-        </Header>
+        </DynamicDialogHeader>
 
         <DialogContent>
             

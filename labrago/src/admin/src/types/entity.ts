@@ -1,4 +1,4 @@
-import { Edge, Entity, Field, Maybe } from "@/lib/apollo/graphql";
+import { Edge, Entity, Field, Maybe } from "@/lib/apollo/graphql.entities";
 
 export type NameCaptionEntity = {
     name: string;

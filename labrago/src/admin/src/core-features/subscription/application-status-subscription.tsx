@@ -1,60 +1,62 @@
 import { useEffect, useRef } from "react";
-import { useSubscription } from "./subscription-provider";
-import { handleCodeGenerationStarted } from "@/store/handlers/handleCodeGenerationStarted";
-import { ApolloClient, useApolloClient } from "@apollo/client";
-import { handleCodeGenerationCompleted } from "@/store/handlers/handleCodeGenerationCompleted";
-import { AppStatusEvent } from "@/store/app-state";
-import { AppStatusApplicationUpMessage, AppStatusEventCodeGenerationFailedMessage, AppStatusEventCodeGenerationRevertedMessage, AppStatusEventCodeGenerationStartedMessage, AppStatusEventMessage } from "@/types/centrifugo";
-import { handleCodeGenerationReverted } from "@/store/handlers/handleCodeGenerationReverted";
-import { handleCodeGenerationFailed } from "@/store/handlers/handleCodeGenerationFailed";
-import { handleApplicationShutdown } from "@/store/handlers/handleApplicationShutdown";
-import { handleApplicationUp } from "@/store/handlers/handleApplicationUp";
+import { ApolloClient, gql, useApolloClient } from "@apollo/client";
+import { useSubscription } from "./use-subscription";
+import { handleApplicationStatusFailed, handleApplicationStatusGenerating, handleApplicationStatusRestarting, handleApplicationStatusReverting, handleApplicationStatusUP } from "@/store/handlers/handleApplicationStatus";
+import { AppStatus } from "@/lib/apollo/graphql.entities";
+import { GraphQlSubscriptionProviderType } from "./graphql-provider";
+import { ENTITY_CONTEXT } from '@/lib/apollo/apolloWrapper';
+
+const appStatusSubscription = gql`
+    subscription appStatus {
+        appStatus
+    }
+`
 
 export const ApplicationStatusSubscription = () => {
 
-    const client = useSubscription();
+    const client = useSubscription<GraphQlSubscriptionProviderType>();
 
-    const apolloClient = useApolloClient();
-    const handlersRef = useRef<ApolloClient<any>>(apolloClient);
-    handlersRef.current = apolloClient;
+    const handlersRef = useRef<ApolloClient<any>>(null!);
+    handlersRef.current = useApolloClient();
     
     useEffect(() => {
-        return client.subscribe('APP_STATUS', (data: AppStatusEventMessage) => {
-            
-            if (data.event === AppStatusEvent.CODE_GENERATION_STARTED) {
-                handleCodeGenerationStarted(data as AppStatusEventCodeGenerationStartedMessage, handlersRef.current);
-                return;
-            }
-
-            if (data.event === AppStatusEvent.CODE_GENERATION_COMPLETED) {
-                handleCodeGenerationCompleted();
-                return;
-            }
-
-            if (data.event === AppStatusEvent.CODE_GENERATION_REVERTED) {
-                handleCodeGenerationReverted(data as AppStatusEventCodeGenerationRevertedMessage);
-                return;
-            }
-
-            if (data.event === AppStatusEvent.CODE_GENERATION_FAILED) {
-                handleCodeGenerationFailed(data as AppStatusEventCodeGenerationFailedMessage);
-                return;
-            }
-
-            if (data.event === AppStatusEvent.SHUTDOWN) {
-                handleApplicationShutdown(data as AppStatusApplicationUpMessage);
-                return;
-            }
-
-            if (data.event === AppStatusEvent.UP) {
-                handleApplicationUp(data as AppStatusApplicationUpMessage, handlersRef.current);
-                return;
-            }
-            
-           
-
+        const cleanup = client?.onReconnected(() => {
+            handleApplicationStatusUP(handlersRef.current);
         });
-    }, [client]);
+
+        return () => { cleanup(); };
+    }, [client.onReconnected]);
+
+
+    useEffect(() => {
+        return client.subscribe('appStatus', appStatusSubscription, ENTITY_CONTEXT, (data: AppStatus ) => {
+            
+            if (data === AppStatus.Generating) {
+                handleApplicationStatusGenerating()
+                return;
+            }
+
+            if (data === AppStatus.Reverting) {
+                handleApplicationStatusReverting()
+                return;
+            }
+
+            if (data === AppStatus.Restarting) {
+                handleApplicationStatusRestarting()
+                return;
+            }
+
+            if (data === AppStatus.Fatal) {
+                handleApplicationStatusFailed()
+                return;
+            }
+
+            if (data === AppStatus.Up) {
+                handleApplicationStatusUP(handlersRef.current);
+                return;
+            }
+        });
+    }, [client.subscribe]);
 
     return null;
 }

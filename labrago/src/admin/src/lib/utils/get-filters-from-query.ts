@@ -1,6 +1,6 @@
 import { AdvancedFilter } from "@/core-features/dynamic-filter/filter";
 import { containsFoldOperator, eqNumberOperator, eqBooleanOperator } from "@/core-features/dynamic-filter/filter-operators";
-import { Field } from "@/lib/apollo/graphql";
+import { Field } from "@/lib/apollo/graphql.entities";
 
 
 export const getAdvancedFiltersFromQuery = (query: string, fields: Field[]): AdvancedFilter[] => {

@@ -1,5 +1,5 @@
 import { alpha, Box, ButtonBase, PaletteColor, Stack, styled } from "@mui/material";
-import SettingsIcon from "@/icons/iconly/bulk/settings";
+import SettingsIcon from "@/assets/icons/iconly/bulk/settings";
 import { usePathname } from "next/navigation";
 import { paths } from "@/lib/paths";
 import { MenuItem } from "../Topnav/top-nav";

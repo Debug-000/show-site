@@ -17,6 +17,7 @@ export const WithEntityData = (Component: ComponentType<ShowGraphQlQueryProps>) 
                 title="Get Entries"
                 query={query.query}
                 variables={query.variables}
+                context={null}
             />
         )
     };

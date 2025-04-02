@@ -26,7 +26,3 @@ export const ActionList: FC<ActionListProps> = (props) => {
     </List>
   );
 };
-
-ActionList.propTypes = {
-  children: PropTypes.node
-};

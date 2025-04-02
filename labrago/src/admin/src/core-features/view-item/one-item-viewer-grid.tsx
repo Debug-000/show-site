@@ -12,7 +12,8 @@ import { useRouter } from "next/navigation";
 
 interface OneItemViewerGridProps {
     entityName: string;
-    entryId: string
+    entryId: string;
+    showId: boolean;
 }
 export const OneItemViewerGrid = (props: OneItemViewerGridProps) => {
 
@@ -27,7 +28,8 @@ export const OneItemViewerGrid = (props: OneItemViewerGridProps) => {
         fields: contentManagerStore.state.entityFields,
         edges: contentManagerStore.state.entityEdges,
         displayFieldName: fullEntity?.displayField?.name ?? 'id',
-        expansionStore: expansionStore
+        expansionStore: expansionStore,
+        showId: props.showId
     });
 
     // Row Actions
@@ -99,7 +101,8 @@ export const OneItemViewerGrid = (props: OneItemViewerGridProps) => {
             {childGridParams?.isOpen && <OneItemViewerGrid
                 key={`${childGridParams.params.entityName}${childGridParams.params.entryId}`}
                 entityName={childGridParams.params.entityName}
-                entryId={childGridParams.params.entryId} />}
+                entryId={childGridParams.params.entryId}
+                showId={props.showId} />}
 
         </Stack>)
 }
@@ -108,6 +111,7 @@ export const OneItemViewerGrid = (props: OneItemViewerGridProps) => {
 interface OneItemViewerGridRootProps {
     entityName: string;
     entryId: string;
+    showId: boolean;
 }
 export const OneItemViewerGridRoot = (props: OneItemViewerGridRootProps) => {
 
@@ -121,7 +125,8 @@ export const OneItemViewerGridRoot = (props: OneItemViewerGridRootProps) => {
             <OneItemViewerGrid
                 key={`${props.entityName}${props.entryId}`}
                 entityName={props.entityName}
-                entryId={props.entryId} />
+                entryId={props.entryId}
+                showId={props.showId} />
         </Box>
     )
 }

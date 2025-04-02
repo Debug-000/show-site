@@ -5,7 +5,8 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useCallback, useMemo, useState } from 'react';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { gql, useApolloClient } from '@apollo/client';
-import { NEXT_PUBLIC_GRAPHQL_PLAYGROUND_URL } from '@/config/CONST';
+import { GRAPHQL_ENTITY_PLAYGROUND_URL, GRAPHQL_QUERY_PLAYGROUND_URL } from '@/config/CONST';
+import { ENTITY_CONTEXT } from '@/lib/apollo/apolloWrapper';
 
 const Chip = styled(MuiChip)(({ theme }) => ({
     borderRadius: '3px',
@@ -14,6 +15,7 @@ export interface ShowGraphQlQueryProps {
     title: string
     query: string;
     variables: Record<string, any> | null;
+    context: any | null;
 }
 export const ShowGraphQlQuery: React.FC<ShowGraphQlQueryProps> = (props: ShowGraphQlQueryProps) => {
 
@@ -25,17 +27,18 @@ export const ShowGraphQlQuery: React.FC<ShowGraphQlQueryProps> = (props: ShowGra
     const [result, setResult] = useState<any>(null);
 
     const runQuery = useCallback(() => {
-        client.query({ query: gql(query), variables: props.variables ?? {}, fetchPolicy: "network-only" }).then((response) => {
+        client.query({ query: gql(query), variables: props.variables ?? {}, fetchPolicy: "network-only", context: props.context }).then((response) => {
             setResult(response);
         }).catch((error) => {
             setResult(error);
         });
 
-    }, [client, query, variables]);
+    }, [client, query, variables, props.context]);
 
     const runQueryInPlayground = useCallback(() => {
-        window.open(`${NEXT_PUBLIC_GRAPHQL_PLAYGROUND_URL!}?q=${encodeURIComponent(query)}&v=${encodeURIComponent(variables ?? '{}')}`, '_blank');
-    }, [query, variables]);
+        const playgroundUrl = props.context ? GRAPHQL_ENTITY_PLAYGROUND_URL : GRAPHQL_QUERY_PLAYGROUND_URL;
+        window.open(`${playgroundUrl!}?q=${encodeURIComponent(query)}&v=${encodeURIComponent(variables ?? '{}')}`, '_blank');
+    }, [query, variables, props.context]);
 
     return (<>
 

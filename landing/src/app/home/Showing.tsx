@@ -10,7 +10,7 @@ export default function Showing() {
   const [activeView, setActiveView] = useState("devices");
 
   return (
-    <div className="flex justify-start flex-col items-center mt-[30rem] py-[5rem] h-[70vh] max-w-[1440px] mx-auto">
+    <div className="flex justify-start flex-col items-center md:mt-[30rem] mt-[10rem] py-[5rem] h-[58rem] max-w-[1440px] mx-auto">
       <h5 className="bg-neutral-100 w-fit px-4 py-2 mt-[8rem] rounded-4xl tracking-wider font-black text-blue-700">
         Speed Meets Simplicity
       </h5>
@@ -18,7 +18,7 @@ export default function Showing() {
         Experience seamless performance with an intuitive interface.
       </h1>
       <div>
-        <div className="text-white mt-12 flex justify-center items-center gap-12 mb-12">
+        <div className="text-white mt-12 flex justify-center items-center md:gap-12 gap-4 mb-12">
           <button
             onClick={() => setActiveView("devices")}
             className={`bg-blue-700 ${

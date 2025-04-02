@@ -3,7 +3,7 @@ import { IoIosColorPalette } from "react-icons/io";
 
 export default function KeyFeatures() {
   return (
-    <div className="flex justify-center flex-col items-center my-[20rem] max-w-[1440px] mx-auto">
+    <div className="flex justify-center flex-col items-center md:my-[20rem] my-[10rem] max-w-[1440px] mx-auto">
       <h5 className="bg-neutral-100 w-fit px-4 py-2 rounded-4xl tracking-wider font-black text-blue-700">
         Speed Meets Simplicity
       </h5>
@@ -11,7 +11,7 @@ export default function KeyFeatures() {
         Experience seamless performance with an intuitive interface.
       </h1>
       <div>
-        <div className="flex justify-between items-start gap-8 mt-[5rem] mb-[2rem]">
+        <div className="flex justify-between lg:flex-row flex-col items-start gap-8 gap-y-24 mt-[5rem] mb-[2rem]">
           <div className="flex flex-col items-center px-4 gap-2 max-w-[30rem]">
             <div className="bg-blue-700 p-4 rounded-full text-white">
               <BsLightning size={32} />

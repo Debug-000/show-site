@@ -17,6 +17,7 @@ export const WithEntityDataUpdateMutation = (Component: ComponentType<ShowGraphQ
                 title="Update Entry"
                 query={query.query}
                 variables={query.variables}
+                context={null}
             />
         )
     };

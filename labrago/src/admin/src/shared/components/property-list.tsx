@@ -17,7 +17,3 @@ export const PropertyList: FC<PropertyListProps> = (props) => {
     </List>
   );
 };
-
-PropertyList.propTypes = {
-  children: PropTypes.node
-};

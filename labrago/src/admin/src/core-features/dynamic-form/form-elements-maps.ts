@@ -11,18 +11,21 @@ import { DateFormField } from "@/core-features/dynamic-form/form-fields/DateFiel
 import { JSONFormField } from "@/core-features/dynamic-form/form-fields/JSONField";
 import { SelectFormField } from "@/core-features/dynamic-form/form-fields/SelectField";
 import { FormFieldTypes } from "@/types/field-type-descriptor";
-import { LookupFIELDFormField } from "@/core-features/dynamic-form/form-fields/LookupFIELD";
+import { LookupOneFIELDFormField } from "@/core-features/dynamic-form/form-fields/LookupOneFIELD";
+import { LookupManyFIELDFormField } from "./form-fields/LookupManyFIELD";
 import { EntitySelectorFIELDFormField } from "@/core-features/dynamic-form/form-fields/EntitySelectorFIELD";
 import { BooleanSelectFormField } from "@/core-features/dynamic-form/form-fields/BooleanSelectField";
 import { SingleChoiceFormField } from "@/core-features/dynamic-form/form-fields/SingleChoice";
 import { MultipleChoiceFormField } from "@/core-features/dynamic-form/form-fields/MultipleChoice";
 import { TagsSelectFormField } from "@/core-features/dynamic-form/form-fields/TagsSelectField";
+import { PasswordFormField } from "./form-fields/PasswordField";
 
 export const FormElementsMap = { 
     ShortText: TextShortFormField,
     LongText: TextLongFormField,
     Email: EmailFormField,
-    RichText: RichTextFormField ,
+    RichText: RichTextFormField,
+    Password: PasswordFormField,
     
     Integer: NumberFormField,
     Decimal: NumberFormField,
@@ -42,7 +45,8 @@ export const FormElementsMap = {
 
     SingleChoice: SingleChoiceFormField,
     MultipleChoice: MultipleChoiceFormField,
-    Relation: LookupFIELDFormField,
+    RelationOne: LookupOneFIELDFormField,
+    RelationMany: LookupManyFIELDFormField, 
     EntitySelector: EntitySelectorFIELDFormField
 
 } as {[key in FormFieldTypes]: React.FC<any>};

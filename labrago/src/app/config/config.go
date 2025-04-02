@@ -8,12 +8,8 @@ import (
 )
 
 type Config struct {
-	DBHost               string `env:"DB_HOST,required"`
-	DBPort               string `env:"DB_PORT,required"`
-	DBUser               string `env:"DB_USER,required"`
-	DBDBName             string `env:"DB_NAME,required"`
-	DBPassword           string `env:"DB_PASSWORD,required"`
-	DBSSLMode            string `env:"DB_SSLMODE,required"`
+	DSN                  string `env:"DSN,required"`
+	DBDialect            string `env:"DB_DIALECT,required"`
 	ServerPort           string `env:"SERVER_PORT,required"`
 	EntSchemaPath        string `env:"ENT_SCHEMA_PATH,required"`
 	SecretKey            string `env:"SECRET_KEY,required"`
@@ -22,16 +18,14 @@ type Config struct {
 }
 
 func New() (*Config, error) {
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	return nil, fmt.Errorf("unable to load .env file: %w", err)
-	// }
-
-	_ = godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		return nil, fmt.Errorf("unable to load .env file: %w", err)
+	}
 
 	var cfg = &Config{}
 
-	err := env.Parse(cfg)
+	err = env.Parse(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse environment variables: %w", err)
 	}

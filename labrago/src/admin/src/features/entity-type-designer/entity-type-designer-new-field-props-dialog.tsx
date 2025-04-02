@@ -15,8 +15,8 @@ import { useUpdateValueBasedOnDependencies } from "./useUpdateValueBasedOnDepend
 import { Id } from "@/shared/components/id";
 import { DesignerField } from "@/types/entity";
 import { useMyDialogContext } from "@/core-features/dynamic-dialog/src/use-my-dialog-context";
-import { useDynamicDialogFooter } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-footer";
-import { useDynamicDialogHeader } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-header";
+import { DynamicDialogFooter } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-footer";
+import { DynamicDialogHeader } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-header";
 
 
 interface EntityTypeDesignerNewFieldPropsDialogProps {
@@ -27,8 +27,6 @@ export const EntityTypeDesignerNewFieldPropsDialog = forwardRef<ChainDialogConte
 
     const { selectedChildTypeDescriptor, defaultValue } = props;
     const myDialogContext = useMyDialogContext();
-    const Header = useDynamicDialogHeader();
-    const Footer = useDynamicDialogFooter();
 
     const dynamicForm = useDynamicForm({ initialOpenMode: myDialogContext.openMode, defaultValue });
     const schema = useEntityTypeDesignerNewFieldSchema(selectedChildTypeDescriptor, dynamicForm.watch, myDialogContext.editId);
@@ -40,7 +38,6 @@ export const EntityTypeDesignerNewFieldPropsDialog = forwardRef<ChainDialogConte
 
     const onSetResult = useCallback(
         (data: any) => {
-            debugger;
             myDialogContext.closeWithResults({
                 selectedChildTypeDescriptor: selectedChildTypeDescriptor,
                 field: {
@@ -75,7 +72,7 @@ export const EntityTypeDesignerNewFieldPropsDialog = forwardRef<ChainDialogConte
 
     return (
         <>
-            <Header>
+            <DynamicDialogHeader>
                 <Stack direction="row" gap={1}>
                     {myDialogContext.openMode === FormOpenMode.New && (
                         <IconButton onClick={goToFieldType}>
@@ -92,7 +89,7 @@ export const EntityTypeDesignerNewFieldPropsDialog = forwardRef<ChainDialogConte
                         ></EntityFieldTypeDescriptor>
                     )}
                 </Stack>
-            </Header>
+            </DynamicDialogHeader>
 
             <DialogContent>
 
@@ -106,7 +103,7 @@ export const EntityTypeDesignerNewFieldPropsDialog = forwardRef<ChainDialogConte
 
             </DialogContent>
 
-            <Footer>
+            <DynamicDialogFooter>
                 <Stack direction="row" gap={1}>
                     {myDialogContext.openMode === FormOpenMode.New && (
                         <Button
@@ -125,7 +122,7 @@ export const EntityTypeDesignerNewFieldPropsDialog = forwardRef<ChainDialogConte
                         Save
                     </Button>
                 </Stack>
-            </Footer>
+            </DynamicDialogFooter>
         </>
     );
 });

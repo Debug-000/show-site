@@ -2,9 +2,9 @@ import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
 import ContentManagerEntities from "./content-manager-entities";
-import { GetEntitiesNameCaptionDocument } from '@/lib/apollo/graphql';
 import { ThemeProvider } from "@mui/material";
 import { theme } from "@/styles/theme";
+import { GetEntitiesNameCaption } from "@/hooks/use-entities";
 
 
 
@@ -22,7 +22,7 @@ function MockTheme({ children }: any) {
 const mocks = [
     {
         request: {
-            query: GetEntitiesNameCaptionDocument,
+            query: GetEntitiesNameCaption,
         },
         result: {
             "data": {

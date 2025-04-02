@@ -2,10 +2,10 @@ import "@testing-library/jest-dom";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { MockedProvider } from "@apollo/client/testing";
-import { GetEntitiesNameCaptionDocument } from '@/lib/apollo/graphql';
 import { ThemeProvider } from "@mui/material";
 import EntityTypeBuilderEntities from "./entity-type-designer-entities";
 import { theme } from "@/styles/theme";
+import { GetEntitiesNameCaption } from "@/hooks/use-entities";
 
 function MockTheme({ children }: any) {
 
@@ -36,7 +36,7 @@ describe("Load graphql data", () => {
     const mocks = [
         {
             request: {
-                query: GetEntitiesNameCaptionDocument,
+                query: GetEntitiesNameCaption,
             },
             result: {
                 "data": {
@@ -104,7 +104,7 @@ describe("Handles the full add new entity flow", () => {
     const mocks = [
         {
             request: {
-                query: GetEntitiesNameCaptionDocument,
+                query: GetEntitiesNameCaption,
             },
             result: {
                 "data": {

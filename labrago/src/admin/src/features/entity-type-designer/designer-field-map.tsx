@@ -1,7 +1,7 @@
-import NumbersIcon from "@/icons/bootstrap/numbers";
-import SwitchIcon from "@/icons/bootstrap/switch";
-import BracesIcon from "@/icons/bootstrap/braces";
-import { Edge, Field, RelationType } from "@/lib/apollo/graphql";
+import NumbersIcon from "@/assets/icons/bootstrap/numbers";
+import SwitchIcon from "@/assets/icons/bootstrap/switch";
+import BracesIcon from "@/assets/icons/bootstrap/braces";
+import { Edge, Field, RelationType } from "@/lib/apollo/graphql.entities";
 import { PiSpiral } from "react-icons/pi";
 // import { iconToNode } from "@/lib/utils/type-to-node";
 import { TbRelationOneToManyFilled } from "react-icons/tb";
@@ -24,7 +24,7 @@ import { MdOutlineChecklistRtl } from "react-icons/md";
 import { FC, ReactNode } from "react";
 
 export const designerEdges: Array<ChildTypeDescriptor> = [{
-    type: 'Relation',
+    type: 'RelationOne',
     icon: <PiGraphFill size={18} />,
     label: 'Relation',
     description: 'Foreign key to another entity',

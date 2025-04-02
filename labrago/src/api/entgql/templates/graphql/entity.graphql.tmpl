@@ -39,6 +39,19 @@ input CreateMany{{$.Node.Name}}Input {
     connect: [{{$.Node.Name}}WhereUniqueInput!]
 }
 
+
+input UpdateOne{{$.Node.Name}}Input {
+    create: Create{{$.Node.Name}}Input
+    connect: {{$.Node.Name}}WhereUniqueInput
+    unset: Boolean
+}
+
+input UpdateMany{{$.Node.Name}}Input {
+    create: [Create{{$.Node.Name}}Input!]
+    connect: [{{$.Node.Name}}WhereUniqueInput!]
+    disconnect: [{{$.Node.Name}}WhereUniqueInput!]
+}
+
 {{- range $inputName, $input := $.CreateInputs }}
 input {{ $inputName }} {
     {{- range $name, $type := $input }}

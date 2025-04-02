@@ -82,7 +82,7 @@ export const createComponents = (): Components => {
             styleOverrides: {
                 root: {
                     fontSize: 14,
-                    fontWeight: 600,
+                    fontWeight: 400,
                     letterSpacing: 0
                 }
             }

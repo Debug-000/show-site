@@ -6,6 +6,7 @@ import { createOptions as createDarkOptions } from './dark/create-options';
 import { createOptions as createLightOptions } from './light/create-options';
 import { createComponents } from './base/create-components';
 import { createTypography } from './base/create-typography';
+import { COLOR } from '@/config/CONST';
 
 declare module '@mui/material/styles' {
 
@@ -51,7 +52,7 @@ interface ThemeConfig {
 }
 
 let config: ThemeConfig = {
-    colorPreset: 'blue',
+    colorPreset: COLOR as ColorPreset,
 };
 
 

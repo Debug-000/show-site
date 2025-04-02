@@ -1,4 +1,4 @@
-import { Entity } from "@/lib/apollo/graphql";
+import { Entity } from "@/lib/apollo/graphql.entities";
 
 
 export type EntityChanges = {

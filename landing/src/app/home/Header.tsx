@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
+import Banner from "../../../public/browser.png";
 
 export default function Header() {
   const [copied, setCopied] = useState(false);
@@ -13,8 +15,8 @@ export default function Header() {
   };
 
   return (
-    <div className="flex justify-between items-center p-[8rem]">
-      <div className="w-[50%] flex flex-col gap-4">
+    <div className="flex lg:flex-row flex-col justify-between items-center md:p-[8rem] p-[2rem]">
+      <div className="lg:w-[50%] w-full flex flex-col gap-4">
         <h5 className="bg-white w-fit px-4 py-2 rounded-4xl tracking-wider font-black text-blue-700">
           LabraGo CMS with Go Lang
         </h5>
@@ -45,10 +47,14 @@ export default function Header() {
           </button>
         </div>
       </div>
-      <div>
-        <button className="bg-[#f5f5f5] text-[#333] px-4 py-2 rounded-[0.5rem]">
-          Sign Up
-        </button>
+      <div className="relative lg:w-[60%] w-full h-[30rem]">
+        <Image
+          src={Banner}
+          alt="Home-Banner"
+          className="absolute top-0 right-[10%] lg:right-[-10%] lg:w-[55rem] w-full h-[30rem] object-contain box drop-shadow"
+          width={1000}
+          height={1000}
+        />
       </div>
     </div>
   );

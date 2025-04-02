@@ -1,9 +1,10 @@
 import { useCallback, useMemo } from "react";
-import { Edge, Entity, Field } from "@/lib/apollo/graphql";
+import { Edge, Entity, Field } from "@/lib/apollo/graphql.entities";
 import { ChangedFullEntity, ChangedNameCaptionEntity, DesignerEdge, DesignerField, NameCaptionEntity } from "@/types/entity";
 import { gql, useApolloClient } from "@apollo/client";
 import { useEntitiesDesignerChanges } from "./use-designer-entities-changes";
 import { useEntities, useFullEntity } from "@/hooks/use-entities";
+import { ENTITY_CONTEXT } from "@/lib/apollo/apolloWrapper";
 
 export const useEntitiesDesigner = () => {
 
@@ -140,7 +141,7 @@ export const useEntitiesDesigner = () => {
             return;
         }
 
-        client.mutate({ mutation: gql(query.query), variables: query.variables, fetchPolicy: "network-only" })
+        client.mutate({ mutation: gql(query.query), variables: query.variables, fetchPolicy: "network-only", context: ENTITY_CONTEXT })
             .then((response) => {
 
                 // const mutatedEntities = Object.keys(response.data).map(key => ({

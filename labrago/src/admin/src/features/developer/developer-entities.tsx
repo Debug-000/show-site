@@ -10,8 +10,8 @@ import { useMemo } from "react";
 import Defaults from "@/config/Defaults.json";
 import { useAppStatus } from "@/store/app-state/use-app-state";
 import { MenuItem } from "@/shared/layouts/header/Topnav/top-nav";
-import ArrowRight from "@/icons/iconly/bulk/arrow-right";
-import { NEXT_PUBLIC_GRAPHQL_PLAYGROUND_URL } from "@/config/CONST";
+import ArrowRight from "@/assets/icons/iconly/bulk/arrow-right";
+import { GRAPHQL_ENTITY_PLAYGROUND_URL, GRAPHQL_QUERY_PLAYGROUND_URL } from "@/config/CONST";
 import { useCurrentEntityNameContext } from "@/hooks/use-current-entity";
 
 const skip_link_id = 'developer-entities';
@@ -22,8 +22,6 @@ export default function DeveloperEntities() {
 
     const { entities, loadingNameCaptionEntities: loading } = useEntities();
     const entityId = useCurrentEntityNameContext();
-
-    console.log(entityId);
 
     return (
         <Box id={skip_link_id}>
@@ -42,9 +40,15 @@ export default function DeveloperEntities() {
 
                     <TreeListItemNavigation
                         active={false}
-                        path={NEXT_PUBLIC_GRAPHQL_PLAYGROUND_URL!}
+                        path={GRAPHQL_QUERY_PLAYGROUND_URL!}
                         label="Playground"
-                        external={true} />
+                        externalLink={true} />
+
+                    <TreeListItemNavigation
+                        active={false}
+                        path={GRAPHQL_ENTITY_PLAYGROUND_URL!}
+                        label="Entity Playground"
+                        externalLink={true} />
 
                 </TreeList>
             </CategoryCollapse>

@@ -14,9 +14,8 @@ import { useEntityTypeDesignerNewEdgeSchema } from "./use-entity-type-designer-n
 import { Id } from "@/shared/components/id";
 import { DesignerField } from "@/types/entity";
 import { useMyDialogContext } from "@/core-features/dynamic-dialog/src/use-my-dialog-context";
-import { useDynamicDialogFooter } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-footer";
-import { useDynamicDialogHeader } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-header";
-
+import { DynamicDialogHeader } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-header";
+import { DynamicDialogFooter } from "@/core-features/dynamic-dialog/src/use-dynamic-dialog-footer";
 
 interface EntityTypeDesignerNewFieldPropsDialogProps {
     entityName: string;
@@ -27,8 +26,6 @@ export const EntityTypeDesignerNewEdgePropsDialog = forwardRef<ChainDialogConten
 
     const { selectedChildTypeDescriptor: selectedChildTypeDescriptor, defaultValue } = props;
     const myDialogContext = useMyDialogContext();
-    const Header = useDynamicDialogHeader();
-    const Footer = useDynamicDialogFooter();
 
     const dynamicForm = useDynamicForm({ initialOpenMode: myDialogContext.openMode, defaultValue });
     const schema = useEntityTypeDesignerNewEdgeSchema(selectedChildTypeDescriptor, dynamicForm.watch, myDialogContext.editId);
@@ -38,7 +35,6 @@ export const EntityTypeDesignerNewEdgePropsDialog = forwardRef<ChainDialogConten
     }, [dynamicForm.setLayoutItems, schema]);
 
     const onSetResult = useCallback((data: any) => {
-        debugger;
         myDialogContext.closeWithResults({
             selectedChildTypeDescriptor: selectedChildTypeDescriptor,
             field: {
@@ -67,7 +63,7 @@ export const EntityTypeDesignerNewEdgePropsDialog = forwardRef<ChainDialogConten
 
     return (
         <>
-            <Header>
+            <DynamicDialogHeader>
                 <Stack direction="row" gap={1}>
                     {myDialogContext.openMode === FormOpenMode.New && (
                         <IconButton onClick={goToFieldType}>
@@ -84,7 +80,7 @@ export const EntityTypeDesignerNewEdgePropsDialog = forwardRef<ChainDialogConten
                         ></EntityFieldTypeDescriptor>
                     )}
                 </Stack>
-            </Header>
+            </DynamicDialogHeader>
 
             <DialogContent>
                 {!!defaultValue?.name && <Id id="Name" value={defaultValue.name} rootProps={{
@@ -96,7 +92,7 @@ export const EntityTypeDesignerNewEdgePropsDialog = forwardRef<ChainDialogConten
                 </form>
             </DialogContent>
 
-            <Footer>
+            <DynamicDialogFooter>
                 <Stack direction="row" gap={1}>
                     {myDialogContext.openMode === FormOpenMode.New && (
                         <Button
@@ -116,7 +112,7 @@ export const EntityTypeDesignerNewEdgePropsDialog = forwardRef<ChainDialogConten
                         Save
                     </Button>
                 </Stack>
-            </Footer>
+            </DynamicDialogFooter>
         </>
     );
 });

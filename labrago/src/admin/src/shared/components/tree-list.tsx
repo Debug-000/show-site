@@ -126,10 +126,10 @@ interface TreeListItemNavigationProps extends ListItemButtonProps {
     path: string;
     icon?: React.ReactNode;
     active: boolean;
-    external?: boolean;
+    externalLink?: boolean;
 }
 export const TreeListItemNavigation = (props: TreeListItemNavigationProps) => {
-    const { label, path, icon, active, children, ...other } = props;
+    const { label, path, icon, active, children, externalLink, ...other } = props;
 
     const ListItemButtonStyled = styled(ListItemButton)<ListItemButtonProps & { href: string }>(({ theme }) => ({
         padding: '0 10px', 
@@ -147,7 +147,7 @@ export const TreeListItemNavigation = (props: TreeListItemNavigationProps) => {
         })
     }
 
-    const linkProps = props.external
+    const linkProps = externalLink
         ? {
             component: 'a',
             href: path,
@@ -169,7 +169,7 @@ export const TreeListItemNavigation = (props: TreeListItemNavigationProps) => {
                     <ListItemText primary={
                         <Stack direction="row" alignItems="center" gap={1}>
                             {label}
-                            {props.external && <HiExternalLink />}
+                            {externalLink && <HiExternalLink />}
                         </Stack>
 
                     } primaryTypographyProps={{ sx: textSx }} />

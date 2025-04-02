@@ -17,7 +17,7 @@ import (
 	"app/ent/migrate"
 	"app/generated"
 	"app/handler"
-	"app/login"
+	"app/hooks"
 
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
@@ -27,15 +27,20 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/GoLabra/labrago/src/api/cache"
-	"github.com/GoLabra/labrago/src/api/centrifuge"
 	"github.com/GoLabra/labrago/src/api/constants"
+	apiSvc "github.com/GoLabra/labrago/src/api/domain/svc"
 	"github.com/GoLabra/labrago/src/api/entgql/annotations"
 	"github.com/GoLabra/labrago/src/api/entgql/entity"
+	entityGenerated "github.com/GoLabra/labrago/src/api/entgql/generated"
 	"github.com/GoLabra/labrago/src/api/entgql/generator"
+	entityResolvers "github.com/GoLabra/labrago/src/api/entgql/resolvers"
 	"github.com/GoLabra/labrago/src/api/strcase"
+	"github.com/GoLabra/labrago/src/api/subscription"
 	"github.com/GoLabra/labrago/src/api/utils"
 	"github.com/centrifugal/gocent/v3"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth/v5"
+	"github.com/gorilla/websocket"
 	_ "github.com/lib/pq"
 	"github.com/mitchellh/mapstructure"
 	"github.com/rs/cors"
@@ -47,15 +52,8 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	log.Printf("Config:")
 
-	dsn := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=require",
-		conf.DBHost,
-		conf.DBPort,
-		conf.DBUser,
-		conf.DBDBName,
-		conf.DBPassword)
-	db, err := sql.Open(dialect.Postgres, dsn)
+	db, err := sql.Open(conf.DBDialect, conf.DSN)
 
 	if err != nil {
 		fmt.Println(err)
@@ -76,6 +74,10 @@ func main() {
 	client := ent.NewClient(ent.Driver(drv))
 
 	client = client.Debug()
+
+	client.Use(
+		hooks.CreatedByUpdatedByHook,
+	)
 
 	if err := client.Schema.Create(
 		context.Background(),
@@ -100,7 +102,9 @@ func main() {
 
 	osFileSystem := utils.NewOSFileSystem()
 
-	schemaManager := generator.NewSchemaManager(osFileSystem, "./schema", ".")
+	graphqlSubscriptionClient := subscription.NewGraphqlSubscriptionClient()
+
+	schemaManager := generator.NewSchemaManager(osFileSystem, "./schema", ".", graphqlSubscriptionClient)
 
 	service := svc.New(repository, schemaManager)
 
@@ -113,7 +117,13 @@ func main() {
 		Service: service,
 	}
 
+	entityResolvers := &entityResolvers.Resolver{
+		Service:            &struct{ Entity *apiSvc.Entity }{apiSvc.NewEntity(schemaManager)},
+		SubscriptionClient: graphqlSubscriptionClient,
+	}
+
 	router := chi.NewRouter()
+	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
 
 	// Configure CORS
 	corsMiddleware := cors.New(cors.Options{
@@ -141,17 +151,52 @@ func main() {
 				Resolvers: resolver,
 			},
 		))
+		entitySrv := gqlHandler.New(entityGenerated.NewExecutableSchema(
+			entityGenerated.Config{
+				Resolvers: entityResolvers,
+			},
+		))
 
 		srv.AddTransport(transport.POST{})
 		srv.AddTransport(transport.GET{})
+		srv.AddTransport(transport.Options{})
+		// AV: Please review this
+		srv.AddTransport(&transport.Websocket{
+			Upgrader: websocket.Upgrader{
+				CheckOrigin: func(r *http.Request) bool { return true }, // Allow all origins
+			},
+		})
 		srv.Use(extension.Introspection{})
+		entitySrv.AddTransport(transport.POST{})
+		entitySrv.AddTransport(transport.GET{})
+		entitySrv.AddTransport(transport.Options{})
+		// AV: Please review this
+		entitySrv.AddTransport(&transport.Websocket{
+			Upgrader: websocket.Upgrader{
+				CheckOrigin: func(r *http.Request) bool { return true }, // Allow all origins
+			},
+		})
+		entitySrv.Use(extension.Introspection{})
+
+		// router.Use(jwtauth.Verifier(tokenAuth))
+		// router.Use(handler.Authenticator)
 
 		router.Handle("/query", srv)
+		router.Handle("/entity", entitySrv)
 		router.Handle("/playground", handler.Playground("GraphQL playground", "/query"))
+		router.Handle("/eplayground", handler.Playground("GraphQL playground", "/entity"))
 	})
 
 	router.Group(func(router chi.Router) {
-		router.Post("/login", login.Login)
+		router.Use(jwtauth.Verifier(tokenAuth))
+		router.Use(handler.Authenticator)
+
+		router.Post("/change-session-role", handler.ChangeSessionRole)
+	})
+
+	router.Group(func(router chi.Router) {
+		router.Post("/login", handler.Login)
+		router.Post("/signup", handler.Signup)
 	})
 
 	server := &http.Server{
@@ -161,7 +206,7 @@ func main() {
 
 	log.Printf("Server starting on port %s\n", conf.ServerPort)
 
-	centrifuge.PublishAppStatusMessage(context.Background(), gocentClient, centrifuge.AppStatusUp, nil)
+	graphqlSubscriptionClient.PublishAppStatusMessage(subscription.AppStatusUp)
 
 	err = server.ListenAndServe()
 

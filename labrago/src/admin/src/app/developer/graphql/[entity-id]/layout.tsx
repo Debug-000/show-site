@@ -1,6 +1,4 @@
-import { withAuthGuard } from "@/hocs/with-auth-guard"
-import { CurrentEntityProvider } from "@/hooks/use-current-entity"
-import { Box, Stack } from "@mui/material";
+import { withAuthGuard } from "@/core-features/auth/hocs/with-auth-guard";
 
 const Layout = withAuthGuard((props: { children: React.ReactNode }) => {
     return props.children

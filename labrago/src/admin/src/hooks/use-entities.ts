@@ -1,9 +1,10 @@
-import { Edge, Entity, Field, useGetEntitiesNameCaptionQuery, useGetEntityFirstLevelSchemaLazyQuery, useGetEntityFirstLevelSchemaQuery } from "@/lib/apollo/graphql";
+import { ENTITY_CONTEXT } from "@/lib/apollo/apolloWrapper";
+import { Edge, Entity, Field } from "@/lib/apollo/graphql.entities";
 import { FullEntity, NameCaptionEntity } from "@/types/entity";
-import { gql, makeVar, useReactiveVar } from "@apollo/client";
+import { gql, makeVar, useLazyQuery, useQuery, useReactiveVar } from "@apollo/client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-const _ = gql`
+export const GetEntityFirstLevelSchema = gql`
     fragment FieldProperties on Field {
        name
        caption
@@ -34,8 +35,11 @@ const _ = gql`
                 relationType
                 private
                 relatedEntity {
-                    name,
+                    name
                     caption
+                    displayField {
+                    name
+                    }
                 },
                 belongsToCaption
             }
@@ -58,9 +62,9 @@ export const useEntities = () => {
     const nameCaptionEntities = useReactiveVar<NameCaptionEntity[]>(nameCaptionEntitiesVar);
     const fullEntitiesMap = useReactiveVar<Record<string, FullEntity>>(fullEntitiesMapVar);
 
-    const { data, loading: loadingNameCaptionEntities } = useGetEntitiesNameCaptionQuery();
+    const { data, loading: loadingNameCaptionEntities } = useQuery(GetEntitiesNameCaption, {context: ENTITY_CONTEXT}); //useGetEntitiesNameCaptionQuery();
 
-    const [loadFullEntity] = useGetEntityFirstLevelSchemaLazyQuery();
+    const [loadFullEntity] = useLazyQuery<{entity: Entity}>(GetEntityFirstLevelSchema, {context: ENTITY_CONTEXT}); //useGetEntityFirstLevelSchemaLazyQuery(); 
 
     // set entities
     useEffect(() => {
@@ -110,12 +114,15 @@ export const useEntities = () => {
 
             fullEntitiesMapVar({
                 ...fullEntitiesMap,
-                [data.entity.name]: {
+                [data.entity.name]: { 
                     name: data.entity.name,
                     caption: data.entity.caption,
                     displayField: data.entity.displayField,
                     fields: data.entity?.fields as Array<Field> ?? [],
-                    edges: data.entity?.edges?.filter(i => (i.name != "refCreatedBy" && i.name != "refUpdatedBy")) as Array<Edge> ?? [],
+                    edges: data.entity?.edges?.filter(i => i.name != "refCreatedBy")
+                                            .filter(i => i.name != "refUpdatedBy")
+                                            .filter(i => i.caption != "Ref Updated By")
+                                            .filter(i => i.name != "userRoles") as Array<Edge> ?? [],
                     loading: false,
                 }
             });
