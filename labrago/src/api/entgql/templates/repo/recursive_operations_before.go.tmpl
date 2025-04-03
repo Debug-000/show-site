@@ -1,4 +1,4 @@
-    {{- define "recursive_operations_before" }}
+{{- define "recursive_operations_before" }}
     {{- $isPointer := $.Optional }}
     {{- if $.Unique }}
     if data.{{ Pascal $.Name }}.Connect != nil {    

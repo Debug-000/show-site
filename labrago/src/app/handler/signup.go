@@ -4,6 +4,7 @@ import (
 	"app/domain/svc"
 	"app/ent"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -12,51 +13,64 @@ import (
 )
 
 type SignupFormData struct {
-	Email       string   `json:"email"`
-	Password    string   `json:"password"`
-	FirstName   string   `json:"firstName"`
-	LastName    string   `json:"lastName"`
-	Roles       []string `json:"roles"`
-	DefaultRole string   `json:"defaultRole"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 }
+
+var superAdmin = "SuperAdmin"
 
 // TODO @David: 1. sanitize error messages; 2. move to api; 3. add logs;
 func Signup(w http.ResponseWriter, r *http.Request) {
 	var (
 		signupFormData SignupFormData
+		superAdminRole *ent.Role
 	)
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Printf("error reading body: %v", err)
+		writeErrorResponse(w, "unable to read body", http.StatusInternalServerError)
 		return
 	}
 	defer r.Body.Close()
 	err = json.Unmarshal(body, &signupFormData)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		fmt.Printf("error unmarshaling body: %v", err)
+		writeErrorResponse(w, "unable to unmarshal body", http.StatusInternalServerError)
 		return
 	}
 
 	service, ok := r.Context().Value(constants.ServiceContextValue).(*svc.Service)
 	if !ok {
-		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Printf("error getting service: %v", err)
+		writeErrorResponse(w, "unable to get service", http.StatusInternalServerError)
 		return
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(signupFormData.Password), 14)
 
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Printf("error hashing password: %v", err)
+		writeErrorResponse(w, "unable to hash password", http.StatusInternalServerError)
 		return
 	}
 
-	var rolesConnect = []*ent.RoleWhereUniqueInput{}
-
-	for _, role := range signupFormData.Roles {
-		rolesConnect = append(rolesConnect, &ent.RoleWhereUniqueInput{
-			Name: &role,
+	superAdminRole, err = service.Role.GetOne(r.Context(), ent.RoleWhereUniqueInput{Name: &superAdmin})
+	if err != nil && !ent.IsNotFound(err) {
+		fmt.Printf("error getting super admin role: %v", err)
+		writeErrorResponse(w, "unable to get super admin role", http.StatusInternalServerError)
+		return
+	} else if err != nil && ent.IsNotFound(err) {
+		superAdminRole, err = service.Role.Create(r.Context(), ent.CreateRoleInput{
+			Name: superAdmin,
 		})
+		if err != nil {
+			fmt.Printf("error creating super admin role: %v", err)
+			writeErrorResponse(w, "unable to create super admin role", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	user, err := service.User.Create(r.Context(), ent.CreateUserInput{
@@ -65,17 +79,22 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		FirstName: signupFormData.FirstName,
 		LastName:  signupFormData.LastName,
 		Roles: &ent.CreateManyRoleInput{
-			Connect: rolesConnect,
+			Connect: []*ent.RoleWhereUniqueInput{
+				{
+					ID: &superAdminRole.ID,
+				},
+			},
 		},
 		DefaultRole: &ent.CreateOneRoleInput{
 			Connect: &ent.RoleWhereUniqueInput{
-				Name: &signupFormData.DefaultRole,
+				ID: &superAdminRole.ID,
 			},
 		},
 	})
 
 	if err != nil || user == nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Printf("error creating user: %v", err)
+		writeErrorResponse(w, "unable to create user", http.StatusInternalServerError)
 		return
 	}
 

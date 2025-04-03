@@ -1,5 +1,4 @@
 {{- define "recursive_operations_before_update" }}
-    {{- $isPointer := $.Optional }}
     {{- if $.Unique }}
         if data.{{ Pascal $.Name }}.Connect != nil {    
             toConnect, err := repository.{{ $.Type.Name }}.GetOneTx(ctx, tx, *data.{{ Pascal $.Name }}.Connect)
@@ -8,11 +7,13 @@
                 return nil, err
             }
 
-            data.{{ Pascal $.Name }}ID =  {{ if $isPointer }}&{{ end }}toConnect.ID
+            data.{{ Pascal $.Name }}ID = &toConnect.ID
         }
+        {{- if $.Optional }}
 		if data.{{ Pascal $.Name }}.Unset != nil && *data.{{ Pascal $.Name }}.Unset {
 			data.Clear{{ Pascal $.Name }} = true
 		}
+        {{- end }}
         if data.{{ Pascal $.Name }}.Create != nil {
             var createInput ent.Create{{ $.Type.Name }}Input
             err = mapstructure.Decode(data.{{ Pascal $.Name }}.Create, &createInput)
@@ -26,7 +27,7 @@
                 return nil, err
             }
 
-            data.{{ Pascal $.Name }}ID = {{ if $isPointer }}&{{ end }}toConnect.ID
+            data.{{ Pascal $.Name }}ID = &toConnect.ID
         }
     {{- else }}
     if data.{{ Pascal $.Name }}.Connect != nil {

@@ -18,14 +18,11 @@ type Config struct {
 }
 
 func New() (*Config, error) {
-	err := godotenv.Load()
-	if err != nil {
-		return nil, fmt.Errorf("unable to load .env file: %w", err)
-	}
+	godotenv.Load()
 
 	var cfg = &Config{}
 
-	err = env.Parse(cfg)
+	err := env.Parse(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse environment variables: %w", err)
 	}
