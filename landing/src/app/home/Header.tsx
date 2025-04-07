@@ -17,14 +17,14 @@ export default function Header() {
   return (
     <div className="flex lg:flex-row flex-col justify-between items-center md:p-[8rem] p-[2rem]">
       <div className="lg:w-[50%] w-full flex flex-col gap-4">
-        <h5 className="bg-white w-fit px-4 py-2 rounded-4xl tracking-wider font-black text-blue-700">
+        <h5 className="bg-white-1 w-fit px-4 py-2 rounded-4xl tracking-wider font-black text-blue-700">
           LabraGo CMS with Go Lang
         </h5>
-        <h1 className="text-[3rem] font-black tracking-tight leading-[3.5rem] capitalize">
+        <h1 className="text-[3rem] text-coal-1 font-black tracking-tight leading-[3.5rem] capitalize">
           Build modern websites with the most customizable{" "}
           <span className="text-blue-700">Headless CMS</span>
         </h1>
-        <p>
+        <p className="text-bright-coal">
           The open-source Headless CMS for developers that makes API creation
           easy, and supports your favorite frameworks. Customize and host your
           projects in the cloud or on your own servers.
@@ -34,14 +34,14 @@ export default function Header() {
           <input
             id="npm-install"
             type="text"
-            className="col-span-6 border rounded-lg p-2.5 bg-[#282f3d] border-gray-600 text-gray-100"
+            className="col-span-6 rounded-lg p-2.5 bg-coal-1 text-white-1"
             value="npx create labrago"
             disabled
             readOnly
           />
           <button
             onClick={copyText}
-            className="cursor-pointer col-span-2 text-white bg-blue-700 hover:bg-blue-800 outline-none font-medium rounded-lg text-sm py-2.5 items-center justify-center"
+            className="cursor-pointer col-span-2 text-white bg-blue-700 hover:bg-blue-900 outline-none font-medium rounded-lg text-sm py-2.5 items-center justify-center"
           >
             {copied ? "Copied!" : "Copy"}
           </button>

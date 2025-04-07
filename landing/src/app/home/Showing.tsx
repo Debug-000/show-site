@@ -14,7 +14,7 @@ export default function Showing() {
       <h5 className="bg-neutral-100 w-fit px-4 py-2 mt-[8rem] rounded-4xl tracking-wider font-black text-blue-700">
         Speed Meets Simplicity
       </h5>
-      <h1 className="font-black text-[2rem] text-white mt-4 capitalize text-center max-w-[40rem]">
+      <h1 className="font-black text-[2rem] text-white-1 mt-4 capitalize text-center max-w-[40rem]">
         Experience seamless performance with an intuitive interface.
       </h1>
       <div>
@@ -23,7 +23,7 @@ export default function Showing() {
             onClick={() => setActiveView("devices")}
             className={`bg-blue-700 ${
               activeView === "devices" ? "bg-blue-900" : "bg-blue-700"
-            } hover:bg-blue-900 text-white px-8 py-2 rounded-3xl cursor-pointer`}
+            } hover:bg-blue-900 text-white-1 px-8 py-2 rounded-3xl cursor-pointer`}
           >
             Devices
           </button>
@@ -31,7 +31,7 @@ export default function Showing() {
             onClick={() => setActiveView("browser")}
             className={`bg-blue-700 ${
               activeView === "browser" ? "bg-blue-900" : "bg-blue-700"
-            } hover:bg-blue-900 text-white px-8 py-2 rounded-3xl cursor-pointer`}
+            } hover:bg-blue-900 text-white-1 px-8 py-2 rounded-3xl cursor-pointer`}
           >
             Browser
           </button>
@@ -39,7 +39,7 @@ export default function Showing() {
             onClick={() => setActiveView("phone")}
             className={`bg-blue-700 ${
               activeView === "phone" ? "bg-blue-900" : "bg-blue-700"
-            } hover:bg-blue-900 text-white px-8 py-2 rounded-3xl cursor-pointer`}
+            } hover:bg-blue-900 text-white-1 px-8 py-2 rounded-3xl cursor-pointer`}
           >
             Phone
           </button>
