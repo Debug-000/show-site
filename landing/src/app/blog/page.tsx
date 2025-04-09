@@ -1,7 +1,11 @@
+import Wrapper from "../global/Wrapper";
+
 export default function Blog() {
   return (
-    <div>
-      <h1>Our Blog Page</h1>
-    </div>
+    <Wrapper>
+      <div>
+        <h1>Our Blog Page</h1>
+      </div>
+    </Wrapper>
   );
 }

@@ -1,11 +1,14 @@
+import Wrapper from "../global/Wrapper";
 import ContributinGuide from "./components/ContributionGuide";
 import Discussions from "./components/Discussions";
 
 export default function Community() {
   return (
-    <div>
-      <ContributinGuide />
-      <Discussions />
-    </div>
+    <Wrapper>
+      <div>
+        <ContributinGuide />
+        <Discussions />
+      </div>
+    </Wrapper>
   );
 }

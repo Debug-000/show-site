@@ -1,7 +1,11 @@
+import Wrapper from "../global/Wrapper";
+
 export default function Showcase() {
   return (
-    <div>
-      <h1>Showcase Page</h1>
-    </div>
+    <Wrapper>
+      <div>
+        <h1>Showcase Page</h1>
+      </div>
+    </Wrapper>
   );
 }
