@@ -3,14 +3,14 @@ import Girl from "../../../public/model-manager.png";
 
 const TeamMembers = [
   {
-    name: "Cris Evan",
-    title: "CEO & Founder",
-    image: Boy,
-  },
-  {
     name: "Cindy Summer",
     title: "Marketing Manager",
     image: Girl,
+  },
+  {
+    name: "Cris Evan",
+    title: "CEO & Founder",
+    image: Boy,
   },
   {
     name: "Anna Browns",

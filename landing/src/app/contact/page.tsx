@@ -1,14 +1,17 @@
+import Header from "../global/Header";
 import Wrapper from "../global/Wrapper";
-import Header from "./components/Header";
 import Message from "./components/Message";
 import Support from "./components/Support";
 
 export default function Contact() {
   return (
     <Wrapper>
-      <div className="bg-neutral-100 clip-path h-fit rounded-[1.5rem] max-w-[1440px] mx-auto">
-        <Header />
-      </div>
+      <Header
+        title="Contact Us"
+        description="Contact us for any inquiries, feedback, or support. We are here to help
+        you with your needs. Whether you have questions about our services or
+        need assistance, feel free to reach out."
+      />
 
       <Support />
       <Message />

@@ -17,7 +17,7 @@ export default function OurTeam() {
             <Image
               src={member.image}
               alt={member.name}
-              className="w-[350px] h-[450px] rounded-2xl shadow-lg object-cover"
+              className="w-[350px] h-[450px] rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 object-cover"
             />
             <p className="text-coal-1 text-[1.5rem] mt-4 font-black">
               {member.name}

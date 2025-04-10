@@ -55,7 +55,7 @@ export default function OurStory() {
           </ul>
           <Link
             href={"/"}
-            className="px-12 py-5 bg-coal-1 hover:bg-transparent text-white-1 hover:text-coal-1 border border-transparent hover:border-coal-1 transition-all delay-75 rounded-lg"
+            className="px-12 py-5 bg-coal-1 hover:bg-transparent text-white-1 hover:text-coal-1 border border-transparent hover:border-coal-1 transition-all duration-300 rounded-lg"
           >
             Explore
           </Link>

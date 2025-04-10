@@ -1,11 +1,13 @@
+import Header from "../global/Header";
 import Wrapper from "../global/Wrapper";
 
 export default function Showcase() {
   return (
     <Wrapper>
-      <div>
-        <h1>Showcase Page</h1>
-      </div>
+      <Header
+        title="Showcase"
+        description="Check out the showcase of our projects and their features!"
+      />
     </Wrapper>
   );
 }

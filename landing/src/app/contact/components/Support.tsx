@@ -4,9 +4,9 @@ import { BsGear } from "react-icons/bs";
 export default function Support() {
   return (
     <div className="max-w-[1440px] mx-auto">
-      <div className="flex justify-center items-center mt-[10rem]">
-        <div className="max-w-[40rem] py-8 px-24 flex flex-col justify-center items-center">
-          <BiBasket size={50} />
+      <div className="flex md:flex-row flex-col justify-center items-center my-[15rem]">
+        <div className="max-w-[40rem] py-8 px-24 flex flex-col justify-center items-center md:border-r-2 border-0 border-neutral-200">
+          <BiBasket size={50} color="#1447e6" />
           <p className="text-coal-1 text-[1.5rem] mt-4 font-black">
             Sales Support
           </p>
@@ -17,7 +17,7 @@ export default function Support() {
           </p>
         </div>
         <div className="max-w-[40rem] py-8 px-24 flex flex-col justify-center items-center">
-          <BsGear size={50} />
+          <BsGear size={50} color="#1447e6" />
           <p className="text-coal-1 text-[1.5rem] mt-4 font-black">
             Sales Support
           </p>

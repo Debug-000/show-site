@@ -7,10 +7,12 @@ import Testimonials from "./home/Testimonials";
 import Blog from "./home/Blog";
 import FloatingBubbles from "./global/FloatingBubble";
 import Wrapper from "./global/Wrapper";
+import BackLines from "./global/BackLines";
 
 export default function Home() {
   return (
     <Wrapper>
+      <BackLines />
       <div className="bg-neutral-100 clip-path h-fit rounded-[1.5rem] max-w-[1440px] mx-auto">
         <Header />
       </div>

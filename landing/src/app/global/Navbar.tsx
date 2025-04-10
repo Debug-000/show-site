@@ -4,7 +4,7 @@ import NavLinks from "../data/NavLinks";
 export default function Navbar() {
   return (
     <div>
-      <div className="flex justify-center items-center px-4 py-8 gap-24">
+      <div className="flex justify-center items-center px-4 py-8 mb-8 gap-24">
         <div>
           <h1 className="text-3xl font-extrabold text-blue-700">LabraGo</h1>
         </div>
